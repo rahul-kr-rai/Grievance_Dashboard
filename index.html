@@ -8,17 +8,29 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body>
-      <center><img src="Gov-removebg-preview.png" alt="gov-icon"></center> 
+      <center><img src="image/Gov.png" alt="gov-icon"></center> 
       <br>
+      <h1 class="select-user">Welcome To The Grievance Portal</h1>
+      <div class="Log-image">
+        <center>
+        
+        <br>
+        <img src="image/Citizen.png" alt="citizen" class="icon"> 
+        
+        <img src="image/Department.png" alt="Department" class="icon"> 
+        </center>
+      </div>
       <div class="button">
        <center> 
-                <button class="login-button">Login <i class="fas fa-sign-in-alt"></i></button>
-                <button class="signup-button"><i class="fa-solid fa-user" style="color: #ffffff;"></i> Register</button>
-                
-                
-                <p> <img src="alert.png" class="alert" alt="alert-icon" width="20%" height="20%">
-                    
+                <button class="login-button" onclick="redirectToPage()">Citizen <i class="fas fa-sign-in-alt"></i></button>
+                <button class="signup-button" onclick="redirectToPage()"><i class="fas fa-user"></i> Department Login</button> 
+                <P style="font-family: Arial, Helvetica, sans-serif;"><b><i class="fa fa-info-circle" style="font-size:20px;color:red"></i>  Please select user type.</b></P> 
        </center>
       </div>
+      <script>
+        function redirectToPage() {
+            window.location.href = "/Login/login.html";  
+        }
+      </script>
 </body>
 </html>
