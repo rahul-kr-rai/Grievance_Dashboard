@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="raise.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="/Login/Dashbord.html"><img src="/image/logo.png" alt="Logo"></a>
+            </div>
+            <nav class="nav-links">
+                <h1>Welcome Rahul</h1>
+            </nav>
+            <div class="profile-section">
+                <a href="/index.html" class="login-btn"><i class="fas fa-bell" style="color: #fbff00; font-size: 250%;"></i></a>
+                <a href="/index.html" class="login-btn"><i class="fas fa-user-circle" style="color: #ffffff; font-size: 250%;"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <div class="sidebar-container">
+                <h1 style="color: #00009c;"><i class="fas fa-home"></i> Dashboard</h1>
+                <br>
+                <div class="links">
+                    <a href="Raise New Complaint.html" id="home"><i class="fas fa-hand-rock"></i> Raise New Complaint</a>
+                    <a href="Active Complain.html"><i class="fas fa-bolt"></i> Active Complaint</a>
+                    <a href="Track complain status.html"><i class="fab fa-telegram-plane"></i> Track Complaint Status</a>
+                    <a href="#"><i class="fas fa-gavel"></i> Government Scheme</a>
+                    <a href="#"><i class="fas fa-users"></i> Direct Connect</a>
+                    <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </aside>
+        <div class="content">
+            <div class="complaint-form">
+                <h2 style="color: red;"><i class="fas fa-hand-rock"></i> Raise New Complaint</h2>
+                <form action="Complain submitted.html" class="form">
+                    <div class="select-complain">
+                        <select name="complaint" id="complaint" required>
+                            <option>Select Complain Type</option>
+                            <option value="Road">Road</option>
+                            <option value="Water">Water</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Cleaness">Cleaness</option>
+                            <option value="Scheme Benifit">Gov. Scheme Benifit</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="Issue">
+                        <textarea name="description" id="description" placeholder="Describe Your Issue" required></textarea>
+                    </div>
+                    <div class="file-upload">
+                        <label for="file">Attached any photo/video</label>
+                        <input type="file" name="file" id="file" class="file" >
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2025 TDP Project All Rights Reserved</p>
+        </div>
+    </footer>
+</body>
+
+</html>

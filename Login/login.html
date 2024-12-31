@@ -1,58 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Login & Registration Form</title>
-  <!---Custom CSS File--->
-  <link rel="stylesheet" href="login.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Example</title>
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
-  <div class="container">
-    <input type="checkbox" id="check">
-    <div class="login form">
-      <header>Login</header>
-      <form action="#">
-        <input type="number" placeholder="Enter your mobile number">
-        <input type="password" placeholder="Enter your password">
-        <a href="#">Forgot password?</a>
-        
-        <input type="button" class="button" value="Login" onclick="redirectToPage()">
+    <h1 id="formTitle">Login</h1>
+    <form id="loginForm" style="display: block;">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button type="submit">Login</button>
+        <p id="forgotPasswordLink">Forgot Password?</p>
+    </form>
 
-    <script>
-        function redirectToPage() {
-            window.location.href = "Dashbord.html";  // Replace with the URL you want to redirect to
-        }
-      </script>
-      </form>
-      <!---------------------------------------SIGNUP---------------------------------------->
-      <div class="signup">
-        <span class="signup">Don't have an account?
-         <label for="check">Register</label>
-        </span>
-      </div>
-    </div>
-    <div class="registration form">
-      <header>Register</header>
-      <form action="#">
-        <input type="text" placeholder="Enter your full name">
-        <input type="number" placeholder="Enter your mobile number">
-        <input type="password" placeholder="Create a password">
-        <input type="password" placeholder="Confirm your password">
-        <input type="button" class="button" value="Register" onclick="redirectToPage()">
-        <script>
-          function redirectToPage() {
-              window.location.href = "Dashbord.html";  // Replace with the URL you want to redirect to
-          }
-        </script>
-      </form>
-      <div class="signup">
-        <span class="signup">Already have an account?
-         <label for="check">Login</label>
-        </span>
-      </div>
-    </div>
-  </div>
+    <form id="signupForm" style="display: none;">
+        <input type="text" id="signupUsername" placeholder="Name" required>
+        <div>
+          <label for="gender">Male:</label>
+          <input type="radio" id="gender" name="gender">
+          <label for="gender">Famle:</label>
+          <input type="radio" id="gender"  name="gender">
+        </div>
+        
+        <input type="email" id="signupEmail" placeholder="Email" required>
+        <input type="password" id="signupPassword" placeholder="Password" required>
+        <button type="submit">Signup</button>
+    </form>
+
+    <p id="toggleLink">Don't have an account? Signup</p>
+
+    <script src="index.js"></script>
 </body>
 </html>

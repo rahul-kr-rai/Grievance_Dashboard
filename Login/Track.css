@@ -1,0 +1,187 @@
+/* Import Google font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background-color: #00009c;
+    padding: 10px 20px;
+    width: 100%;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo img {
+    max-width: 250px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+}
+
+.profile-section {
+    display: flex;
+    gap: 100px;
+}
+
+.links a {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    background-color: #119238;
+    padding: 15px 20px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.links a:hover {
+    background-color: #00009c;
+    color: #ffffff;
+}
+
+#home {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+
+#home:hover {
+    background-color: #00009c;
+    color: #ffffff;
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
+}
+
+.content, .sidebar {
+    padding: 20px;
+}
+
+.content {
+    width: 80%;
+    background-color: #f0f0f0;
+}
+
+.sidebar {
+    width: 20%;
+    background-color: #d4d4d4;
+}
+
+h1 {
+    color: #fff;
+    text-align: center;
+}
+
+.complaint-Submitted {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-left: 10%;
+}
+
+.select-complain select,
+textarea,
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.Ubtn{
+    background-color: #02a402;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+}
+.Cbtn{
+    padding: 10px 30px; 
+            background-color: red;
+            color: #fff;
+            border-radius: 5px;
+            border: none;
+            text-decoration: none;
+            margin-top: 30%;
+            margin-right: 10%;
+            margin-left: 40%;
+}
+.Ubtn:hover, .Cbtn:hover{
+    background-color: #00009c;
+}
+
+.footer {
+    background-color: #870000;
+    color: #ffffff;
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+    margin-top: auto; /* Ensures footer stays at the bottom */
+}
+
+@media (max-width: 768px) {
+    .complaint-form {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .form {
+        gap: 10px;
+    }
+
+    .header-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profile-section {
+        flex-direction: column;
+        margin-top: 10px;
+        gap: 10px;
+    }
+
+    .main-content {
+        flex-direction: column;
+    }
+
+    .content, .sidebar {
+        width: 100%;
+    }
+}

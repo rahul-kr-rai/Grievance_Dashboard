@@ -5,28 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="Track.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <style>
-       
-        
-    </style>
 </head>
 
 <body>
     <header class="header">
         <div class="header-container">
-            <!-- Logo Section -->
             <div class="logo">
                 <a href="/Login/Dashbord.html"><img src="/image/logo.png" alt="Logo"></a>
             </div>
-
-            <!-- Navigation Links -->
             <nav class="nav-links">
                 <h1>Welcome Rahul</h1>
             </nav>
-
-            <!-- Profile/Login Section -->
             <div class="profile-section">
                 <a href="/index.html" class="login-btn"><i class="fas fa-bell" style="color: #fbff00; font-size: 250%;"></i></a>
                 <a href="/index.html" class="login-btn"><i class="fas fa-user-circle" style="color: #ffffff; font-size: 250%;"></i></a>
@@ -41,8 +32,8 @@
                 <br>
                 <div class="links">
                     <a href="Raise New Complaint.html" id="home"><i class="fas fa-hand-rock"></i> Raise New Complaint</a>
-                    <a href="#"><i class="fas fa-bolt"></i> Active Complaint</a>
-                    <a href="#"><i class="fab fa-telegram-plane"></i> Track Complaint Status</a>
+                    <a href="Active Complain.html"><i class="fas fa-bolt"></i> Active Complaint</a>
+                    <a href="Track complain status.html"><i class="fab fa-telegram-plane"></i> Track Complaint Status</a>
                     <a href="#"><i class="fas fa-gavel"></i> Government Scheme</a>
                     <a href="#"><i class="fas fa-users"></i> Direct Connect</a>
                     <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -50,13 +41,32 @@
             </div>
         </aside>
         <div class="content">
-            <!--Main Contain -->
+            <div class="complaint-Submitted" style="margin-top: 5%;">
+                <center><i class="fas fa-cogs" style="color: rgb(0, 183, 255); font-size: 500%;"></i></center>
+                    <br>
+                <center><h2 style="text-align: center; color: #f00;">Your complain is Under process...</h2>
+               
+                <p><b>Your Complain ID:</b> RD202425</p>
+                <p><b>Expected Response:</b> 14-Days</p></center>
+                <br>
+                <br>
+            </div>
+            <a href="#" class="Cbtn" 
+            style="
+            
+            
+            ">Cancle</a>
+
+            <a href="#" class="Ubtn">Update</a>
+           
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2025 TDP Project All Rights Reserved</p>
+        </div>
+    </footer>
 </body>
-<footer class="footer">
-    <div class="footer-container">
-        <p>&copy; 2025 TDP Project All Rights Reserved</p>
-    </div>
 
 </html>
