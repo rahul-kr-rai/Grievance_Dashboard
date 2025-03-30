@@ -56,8 +56,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     let validUser = users.find(user => user.email === email && user.password === password);
     if (validUser) {
         alert('Login successful!');
-        // Redirect to Google.com
-        window.location.href = 'https://www.google.com';
+        // Redirect to Dashboard
+        window.location.href = 'C:\Users\rkutk\OneDrive\Desktop\Grievance_Dashboard\Login\Dashbord.html';
     } else {
         alert('Invalid email or password.');
     }
@@ -77,7 +77,7 @@ document.getElementById('forgotPasswordLink').addEventListener('click', function
                 user.password = newPassword;
                 localStorage.setItem('users', JSON.stringify(users));
                 alert('Password updated successfully!');
-                window.location.href = 'https://www.google.com';
+                window.location.href = 'Dashbord.html';
             }
         } else {
             alert('Email not found.');

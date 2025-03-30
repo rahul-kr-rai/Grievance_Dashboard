@@ -124,11 +124,7 @@ body {
     margin: 0 auto; /* Center the header on the page */
 }
 
-.logo img {
-    max-width: 250px; /* Set a fixed width for the logo */
-    height: auto;
-    border-radius: 4px;
-}
+
 
 /* Navigation Links */
 .nav-links {
