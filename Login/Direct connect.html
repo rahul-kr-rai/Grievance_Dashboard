@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Direct Connect</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        /* Basic styling */
+        .connect-section {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .connect-link {
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 1.2em;
+            color: white;
+            background-color: #007BFF;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .connect-link:hover {
+            background-color: #0056b3;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 400px;
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .modal-header {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .modal-content {
+            padding: 15px;
+        }
+
+        .modal-content a,
+        .modal-content button {
+            display: block;
+            text-decoration: none;
+            color: white;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #119238;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-content a:hover,
+        .modal-content button:hover {
+            background-color: #007BFF;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 5;
+        }
+
+        .close-btn {
+            background-color: red;
+            border: none;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="Dashboard.html"><img src="/image/logo.png" alt="Logo" style="height:60px; width: auto;"></a>
+            </div>
+            <nav class="nav-links">
+                <h1>Welcome Rahul</h1>
+            </nav>
+            <div class="profile-section">
+                <a href="/index.html" class="login-btn"><i class="fas fa-bell" style="color: #fbff00; font-size: 250%;"></i></a>
+                <a href="/index.html" class="login-btn"><i class="fas fa-user-circle" style="color: #ffffff; font-size: 250%;"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <div class="sidebar-container">
+                <h1 style="color: #00009c;"><i class="fas fa-home"></i> Dashboard</h1>
+                <div class="links">
+                    <a href="Raise New Complaint.html"><i class="fas fa-hand-rock"></i> Raise New Complaint</a>
+                    <a href="Active Complain.html"><i class="fas fa-bolt"></i> Active Complaint</a>
+                    <a href="Track complain status.html"><i class="fab fa-telegram-plane"></i> Track Complaint Status</a>
+                    <a href="GovSchame.html"><i class="fas fa-gavel"></i> Government Scheme</a>
+                    <a class="connect-link" id="direct-connect"><i class="fas fa-users"></i> Direct Connect</a>
+                    <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <h2>Direct Connect</h2>
+        </div>
+    </div>
+
+    <!-- Modal Section -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal" id="connect-modal">
+        <div class="modal-header">
+            <h3>Select Entity to Connect</h3>
+        </div>
+        <div class="modal-content">
+            <div id="entity-options">
+                <a class="entity-option" data-entity="Mukhiya">Mukhiya</a>
+                <a class="entity-option" data-entity="Sarpanch">Sarpanch</a>
+                <a class="entity-option" data-entity="Ward Sadasya">Ward Sadasya</a>
+                <a class="entity-option" data-entity="BDO/CEO">BDO/CEO</a>
+                <a class="entity-option" data-entity="Nagar Nigam">Nagar Nigam</a>
+                <a class="entity-option" data-entity="Nagar Panchayat">Nagar Panchayat</a>
+            </div>
+            <div id="connect-options" style="display: none;">
+                <a id="whatsapp-link" href="#" target="_blank"><i class="fab fa-whatsapp"></i> Connect on WhatsApp</a>
+                <a id="phone-link" href="#"><i class="fas fa-phone"></i> Call</a>
+                <form>
+                    <textarea name="message" placeholder="Leave a message..." style="width: 100%; height: 60px; margin-bottom: 10px;"></textarea>
+                    <button type="submit">Send Message</button>
+                </form>
+            </div>
+            <button class="close-btn" id="close-modal">Close</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2025 TDP Project All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        const modal = document.getElementById('connect-modal');
+        const overlay = document.getElementById('modal-overlay');
+        const directConnectBtn = document.getElementById('direct-connect');
+        const closeModalBtn = document.getElementById('close-modal');
+        const entityOptions = document.getElementById('entity-options');
+        const connectOptions = document.getElementById('connect-options');
+        const whatsappLink = document.getElementById('whatsapp-link');
+        const phoneLink = document.getElementById('phone-link');
+
+        // Open Modal
+        directConnectBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+            entityOptions.style.display = 'block';
+            connectOptions.style.display = 'none';
+        });
+
+        // Close Modal
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        overlay.addEventListener('click', () => {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        // Handle Entity Selection
+        document.querySelectorAll('.entity-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                const selectedEntity = e.target.getAttribute('data-entity');
+                entityOptions.style.display = 'none';
+                connectOptions.style.display = 'block';
+
+                // Update WhatsApp and Phone links dynamically
+                whatsappLink.href = `https://wa.me/1234567890?text=Hello%20${selectedEntity}`;
+                phoneLink.href = `tel:+1234567890`;
+            });
+        });
+    </script>
+</body>
+
+</html>
