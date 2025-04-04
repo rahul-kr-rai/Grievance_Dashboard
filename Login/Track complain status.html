@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
+    <title>Complaint Status</title>
     <link rel="stylesheet" href="Track.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
@@ -34,7 +34,7 @@
                     <a href="Raise New Complaint.html" id="home"><i class="fas fa-hand-rock"></i> Raise New Complaint</a>
                     <a href="Active Complain.html"><i class="fas fa-bolt"></i> Active Complaint</a>
                     <a href="Track complain status.html"><i class="fab fa-telegram-plane"></i> Track Complaint Status</a>
-                    <a href="#"><i class="fas fa-gavel"></i> Government Scheme</a>
+                    <a href="GovSchame.html"><i class="fas fa-gavel"></i> Government Scheme</a>
                     <a href="#"><i class="fas fa-users"></i> Direct Connect</a>
                     <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
@@ -43,22 +43,16 @@
         <div class="content">
             <div class="complaint-Submitted" style="margin-top: 5%;">
                 <center><i class="fas fa-cogs" style="color: rgb(0, 183, 255); font-size: 500%;"></i></center>
-                    <br>
-                <center><h2 style="text-align: center; color: #f00;">Your complain is Under process...</h2>
-               
-                <p><b>Your Complain ID:</b> RD202425</p>
-                <p><b>Expected Response:</b> 14-Days</p></center>
                 <br>
-                <br>
+                <center>
+                    <h2 style="text-align: center; color: #f00;">Your complaint is Under process...</h2>
+                    <p><b>Your Complaint ID:</b> RD202425</p>
+                    <p><b>Expected Response:</b> 14-Days</p>
+                </center>
+                <br><br>
             </div>
-            <a href="#" class="Cbtn" 
-            style="
-            
-            
-            ">Cancle</a>
-
-            <a href="#" class="Ubtn">Update</a>
-           
+            <a href="#" class="Cbtn" onclick="cancelComplaint()">Cancel</a>
+            <a href="#" class="Ubtn" onclick="updateComplaint()">Update</a>
         </div>
     </div>
 
@@ -67,6 +61,21 @@
             <p>&copy; 2025 TDP Project All Rights Reserved</p>
         </div>
     </footer>
+
+    <script>
+        function cancelComplaint() {
+            const confirmCancel = confirm("Are you sure you want to cancel this complaint?");
+            if (confirmCancel) {
+                alert("Complaint has been cancelled successfully.");
+                // Add logic to cancel the complaint (e.g., API call, update the database, etc.)
+            }
+        }
+
+        function updateComplaint() {
+            // Redirect to the update form page (reference to your "Raise New Complaint" form)
+            window.location.href = "Raise New Complaint.html";
+        }
+    </script>
 </body>
 
 </html>

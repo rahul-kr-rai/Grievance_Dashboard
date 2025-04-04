@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Schemes</title>
+    <link rel="stylesheet" href="Track.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        .scheme-card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .scheme-card:hover {
+            background-color: rgb(184, 248, 184);
+            
+            transform: scale(1.05);
+            box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+        }
+        .scheme-title:hover { 
+            color: #0718d3; 
+        }
+        
+        .scheme-details {
+            display: none;
+            border-top: 1px solid #ccc;
+            margin-top: 15px;
+            padding-top: 10px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .scheme-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .apply-link {
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .scheme-details h4 {
+            margin: 10px 0 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="/Login/Dashbord.html"><img src="/image/logo.png" alt="Logo"></a>
+            </div>
+            <nav class="nav-links">
+                <h1>Welcome Rahul</h1>
+            </nav>
+            <div class="profile-section">
+                <a href="/index.html" class="login-btn"><i class="fas fa-bell" style="color: #fbff00; font-size: 250%;"></i></a>
+                <a href="/index.html" class="login-btn"><i class="fas fa-user-circle" style="color: #ffffff; font-size: 250%;"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <div class="sidebar-container">
+                <h1 style="color: #00009c;"><i class="fas fa-home"></i> Dashboard</h1>
+                <br>
+                <div class="links">
+                    <a href="Raise New Complaint.html" id="home"><i class="fas fa-hand-rock"></i> Raise New Complaint</a>
+                    <a href="Active Complain.html"><i class="fas fa-bolt"></i> Active Complaint</a>
+                    <a href="Track complain status.html"><i class="fab fa-telegram-plane"></i> Track Complaint Status</a>
+                    <a href="Government Schemes.html"><i class="fas fa-gavel"></i> Government Scheme</a>
+                    <a href="#"><i class="fas fa-users"></i> Direct Connect</a>
+                    <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <h2 style="text-align: center; color: #00009c;"><i class="fas fa-landmark"></i> Government Schemes for Citizens</h2>
+
+            <div class="scheme-card" onclick="toggleDetails('scheme1')">
+                <div class="scheme-title">Pradhan Mantri Jan Dhan Yojana (PMJDY)</div>
+                <div class="scheme-details" id="scheme1">
+                    <h4>About:</h4>
+                    <p>A financial inclusion program for affordable access to financial services such as bank accounts, insurance, and pensions.</p>
+                    <h4>Eligibility:</h4>
+                    <p>Available for all citizens aged 10 years or older.</p>
+                    <h4>Required Documents:</h4>
+                    <p>Identity proof, address proof.</p>
+                    <h4>Apply Link:</h4>
+                    <a href="https://pmjdy.gov.in" class="apply-link" target="_blank">Apply Here</a>
+                </div>
+            </div>
+
+            <div class="scheme-card" onclick="toggleDetails('scheme2')">
+                <div class="scheme-title">Ayushman Bharat Yojana</div>
+                <div class="scheme-details" id="scheme2">
+                    <h4>About:</h4>
+                    <p>Cashless healthcare services covering secondary and tertiary health services for economically vulnerable citizens.</p>
+                    <h4>Eligibility:</h4>
+                    <p>Families identified in SECC 2011 census.</p>
+                    <h4>Required Documents:</h4>
+                    <p>Identity proof, eligibility proof from SECC database.</p>
+                    <h4>Apply Link:</h4>
+                    <a href="https://pmjay.gov.in" class="apply-link" target="_blank">Apply Here</a>
+                </div>
+            </div>
+
+            <div class="scheme-card" onclick="toggleDetails('scheme3')">
+                <div class="scheme-title">Pradhan Mantri Ujjwala Yojana (PMUY)</div>
+                <div class="scheme-details" id="scheme3">
+                    <h4>About:</h4>
+                    <p>Providing LPG connections to women from below-poverty-line households for clean cooking fuel.</p>
+                    <h4>Eligibility:</h4>
+                    <p>BPL families, SC/ST households, forest dwellers.</p>
+                    <h4>Required Documents:</h4>
+                    <p>BPL card, Aadhaar card.</p>
+                    <h4>Apply Link:</h4>
+                    <a href="https://pmuy.gov.in" class="apply-link" target="_blank">Apply Here</a>
+                </div>
+            </div>
+
+            <div class="scheme-card" onclick="toggleDetails('scheme4')">
+                <div class="scheme-title">Pradhan Mantri Awas Yojana (PMAY)</div>
+                <div class="scheme-details" id="scheme4">
+                    <h4>About:</h4>
+                    <p>Affordable housing for the urban and rural poor.</p>
+                    <h4>Eligibility:</h4>
+                    <p>Low-income families, EWS, LIG, and urban poor.</p>
+                    <h4>Required Documents:</h4>
+                    <p>Income certificate, ID proof.</p>
+                    <h4>Apply Link:</h4>
+                    <a href="https://pmaymis.gov.in" class="apply-link" target="_blank">Apply Here</a>
+                </div>
+            </div>
+
+            <!-- Add more cards for schemes -->
+            <!-- Example schemes: Swachh Bharat Mission, Digital India Mission, etc. -->
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2025 TDP Project All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleDetails(schemeId) {
+            const details = document.getElementById(schemeId);
+            details.style.display = (details.style.display === "block") ? "none" : "block";
+        }
+    </script>
+</body>
+
+</html>

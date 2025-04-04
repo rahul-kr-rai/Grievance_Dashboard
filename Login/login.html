@@ -5,30 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Login & Registration Form</title>
-  <!---Custom CSS File--->
+  <!--- Custom CSS File --->
   <link rel="stylesheet" href="login.css">
+  <style>
+    /* Example styles for the forms */
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .form {
+      display: none;
+    }
+    .form.active {
+      display: block;
+    }
+    .toggle {
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <div class="login form">
+    <div class="login form active">
       <header>Login</header>
       <form action="#">
-        <input type="number" placeholder="Enter your mobile number">
+        <input type="email" placeholder="Enter your email">
         <input type="password" placeholder="Enter your password">
         <a href="#">Forgot password?</a>
-        
         <input type="button" class="button" value="Login" onclick="redirectToPage()">
-
-    <script>
-        function redirectToPage() {
-            window.location.href = "Dashbord.html";  // Replace with the URL you want to redirect to
-        }
-      </script>
       </form>
-      <!---------------------------------------SIGNUP---------------------------------------->
       <div class="signup">
-        <span class="signup">Don't have an account?
-         <label for="check">Register</label>
+        <span>Don't have an account? 
+          <span class="toggle" onclick="toggleForms('registration')">Register</span>
         </span>
       </div>
     </div>
@@ -36,22 +47,33 @@
       <header>Register</header>
       <form action="#">
         <input type="text" placeholder="Enter your full name">
-        <input type="number" placeholder="Enter your mobile number">
+        <input type="email" placeholder="Enter your email">
         <input type="password" placeholder="Create a password">
         <input type="password" placeholder="Confirm your password">
         <input type="button" class="button" value="Register" onclick="redirectToPage()">
-        <script>
-          function redirectToPage() {
-              window.location.href = "Dashbord.html";  // Replace with the URL you want to redirect to
-          }
-        </script>
       </form>
       <div class="signup">
-        <span class="signup">Already have an account?
-         <label for="check">Login</label>
+        <span>Already have an account? 
+          <span class="toggle" onclick="toggleForms('login')">Login</span>
         </span>
       </div>
     </div>
   </div>
+
+  <script>
+    function redirectToPage() {
+      window.location.href = "Dashbord.html"; // Replace with the URL you want to redirect to
+    }
+
+    function toggleForms(formToShow) {
+      const forms = document.querySelectorAll('.form');
+      forms.forEach(form => form.classList.remove('active'));
+
+      const targetForm = document.querySelector(`.${formToShow}`);
+      if (targetForm) {
+        targetForm.classList.add('active');
+      }
+    }
+  </script>
 </body>
 </html>
