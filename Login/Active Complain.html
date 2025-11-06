@@ -44,7 +44,23 @@
             <div class="complaint-Submitted" style="margin-top: 5%;">
                 <h2 style="text-align: center;">Complain Details</h2>
                 <hr>
-                <p style="color: #00009c;"><b> Complained Date:</b> 22-Apr-2025</p>
+                <p style="color: #00009c;">
+                  <b> Complained Date:</b> 
+                  <span id="complainedDate"></span>
+                </p>
+                
+                <script>
+                  // Get today's date
+                  const today = new Date();
+                
+                  // Format it as DD-MMM-YYYY (e.g., 07-Nov-2025)
+                  const options = { day: '2-digit', month: 'short', year: 'numeric' };
+                  const formattedDate = today.toLocaleDateString('en-GB', options).replace(/ /g, '-');
+                
+                  // Insert into the page
+                  document.getElementById("complainedDate").textContent = formattedDate;
+                </script>
+
                 <hr>
                 <p><b>Complaint Type: </b>Road</p>
                 <p><b>Message:</b> MY village’s road condition is very bad</p>
