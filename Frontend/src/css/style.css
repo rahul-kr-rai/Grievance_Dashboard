@@ -1,0 +1,893 @@
+/* Import Google font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- HEADER AND LAYOUT STYLES --- */
+
+.header {
+    background-color: #00009c;
+    padding: 10px 20px;
+    width: 100%;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo img {
+    max-width: 250px;
+    height: auto;
+    border-radius: 4px;
+    /* Define common logo size here if needed */
+    height: 60px; 
+    width: auto;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+}
+
+.profile-section {
+    display: flex;
+    gap: 100px;
+}
+
+h1 {
+    color: #fff;
+    text-align: center;
+}
+
+/* --- SIDEBAR STYLES --- */
+
+.main-content {
+    display: flex;
+    flex: 1;
+    /* Removed fixed height from .main-content to allow content to dictate height */
+}
+
+.content, .sidebar {
+    padding: 20px;
+}
+
+
+.sidebar {
+    width: 20%;
+    background-color: #d4d4d4;
+    /* Removed fixed height for flexibility */
+}
+
+.content {
+    width: 80%;
+    background-color: #f0f0f0;
+}
+
+.sidebar h1 {
+    color: #00009c;
+}
+
+.links a {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    background-color: #119238;
+    padding: 15px 20px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.links a:hover {
+    background-color: #00009c;
+    color: #ffffff;
+}
+
+/* Special ID for 'Raise New Complaint' in Complain submitted.html */
+#home {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+
+#home:hover {
+    background-color: #00009c;
+    color: #ffffff;
+}
+
+/* ACTIVE LINK STYLING (Used across all dashboards) */
+.sidebar .links a.active-link {
+    background-color: #f0f0f0; 
+    color: #00009c !important; 
+    border-left: 15px solid #00009c; 
+    padding-left: 15px;
+}
+
+/* --- COMPLAINT FORM STYLES (Raise New Complaint.html) --- */
+
+.complaint-form {
+    width: 100%;
+    max-width: 750px;
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 5% 10%;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.complaint-form input[type="file"]{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.select-complain :hover, .Issue :hover, .file :hover {
+    background-color: #e7e7e7;
+}
+
+.complaint-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.select-complain select,
+textarea,
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+button[type="submit"] {
+    padding: 10px;
+    background-color: #119238;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0e7a2e;
+}
+
+/* --- COMPLAINT SUBMITTED/TRACK STYLES (Complain submitted.html & Track complain status.html) --- */
+
+.complaint-Submitted {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-left: 10%;
+    width: 100%;
+    max-width: 800px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; /* Centering the element */
+}
+
+/* Track complain status buttons */
+.Ubtn {
+    background-color: #02a402;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+.Cbtn {
+    padding: 10px 30px; 
+    background-color: red;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+    text-decoration: none;
+    margin-top: 10px;
+    /* Adjusting margins to align with Ubtn */
+}
+.Ubtn:hover, .Cbtn:hover {
+    background-color: #00009c;
+}
+
+/* --- GOVERNMENT SCHEMES STYLES (GovSchame.html) --- */
+
+.scheme-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.scheme-card:hover {
+    background-color: rgb(184, 248, 184);
+    transform: scale(1.05);
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+}
+.scheme-title:hover {
+    color: #0718d3;
+}
+
+.scheme-details {
+    display: none;
+    border-top: 1px solid #ccc;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+/* List alignment */
+.scheme-details ul {
+    padding-left: 20px; 
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.scheme-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.apply-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.scheme-details h4 {
+    margin: 10px 0 5px;
+}
+
+/* --- Modal and Overlay Styling --- */
+
+.modal-overlay {
+    display: none;
+    /* ... (rest of .modal-overlay styles) ... */
+}
+
+.modal {
+    display: none; /* Keep this to ensure it's hidden by default if not set by JS */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 550px;
+    height: auto;
+    max-height: 90vh;
+    z-index: 1001;
+    padding: 0;
+    overflow: hidden;
+    /* REMOVE display: flex; and flex-direction: column; from here */
+}
+
+
+.modal-header {
+    background: #00009c;
+    color: #fff;
+    padding: 15px 20px;
+    font-size: 1.2em;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.modal-content {
+    padding: 20px;
+    flex-grow: 1;
+    overflow-y: auto; /* Scrollable content if necessary */
+}
+
+/* --- Close Button --- */
+.close-btn {
+    background: #fff; /* Make it subtle */
+    color: red; /* White icon on blue header */
+    width: 30px;
+    height: 29px;
+    border: none;
+    border-radius: 7px;
+    font-size: 1.5em;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transition: color 0.2s;
+    line-height: 1; /* Center the 'X' icon */
+}
+
+.close-btn:hover {
+    color: #00009c; /* Light red hover */
+}
+
+/* --- WhatsApp and Call Links (New/Improved) --- */
+#connect-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+#connect-options a {
+    flex-grow: 1; /* Makes links expand to fill space */
+    text-align: center;
+    padding: 12px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+#connect-options a i {
+    margin-right: 8px;
+    font-size: 1.2em;
+ 
+}
+
+/* WhatsApp Link Styling */
+#whatsapp-link {
+    background: #14d55b; /* WhatsApp Green */
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(37, 211, 102, 0.4);
+}
+
+#whatsapp-link:hover {
+    background: #128c1e; /* Darker green on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Call Link Styling */
+#phone-link {
+    background: #007bff; /* Standard Blue */
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);
+}
+
+#phone-link:hover {
+    background: #0056b3; /* Darker blue on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Chat Box and Messages --- */
+.chat-box {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f8f9fa; /* Lighter background for the entire box */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-grow: 1; /* Allow chat box to fill remaining vertical space */
+    min-height: 300px; /* Ensure a minimum visible chat area */
+}
+
+.chat-messages {
+    flex-grow: 1; /* Messages area takes up most of the space */
+    overflow-y: auto;
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-message {
+    margin: 4px 0;
+    padding: 8px 12px;
+    border-radius: 18px; /* More modern, pill-shaped bubbles */
+    max-width: 85%; /* Slightly more width for long messages */
+    line-height: 1.4;
+    position: relative;
+    word-wrap: break-word; /* Ensure text wraps */
+}
+
+.chat-message.user {
+    background: #e1ffc7; /* Light pastel green/blue for user */
+    align-self: flex-end;
+}
+
+.chat-message.entity {
+    background: #f1f0f0; /* Soft gray for entity/other party */
+    align-self: flex-start;
+}
+
+/* Styling for media inside message */
+.chat-message img,
+.chat-message video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+}
+
+/* --- Ticks Styling --- */
+.ticks {
+    font-size: 0.7em; /* Smaller font size */
+    margin-left: 5px;
+    color: gray;
+    position: absolute; /* Position relative to the chat-message */
+    bottom: 2px;
+    right: 8px;
+}
+
+.chat-message.user .ticks {
+    color: #34b7f1;
+}
+
+/* The attachment message style (text-only attachment) */
+.chat-message.user.attachment {
+    background: #e2e3e5;
+    font-style: italic;
+    color: #555;
+}
+
+/* --- Chat Input Area --- */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background: #f1f0f0; /* Background color for the input bar */
+    border-top: 1px solid #e0e0e0;
+    align-items: center;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px; /* Pill-shaped input field */
+    margin-right: 5px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.chat-input input:focus {
+    border-color: #007bff;
+}
+
+.chat-input button {
+    padding: 10px 15px;
+    background: #119238;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 1em;
+}
+
+.chat-input button:hover {
+    background: #0e782e;
+}
+
+.attach-btn {
+    cursor: pointer;
+    font-size: 1.5em; /* Larger icon */
+    color: #555;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    margin-left: 5px;
+    transition: color 0.2s;
+}
+
+.attach-btn:hover {
+    color: #007bff;
+}
+
+
+/* --- FOOTER STYLES --- */
+
+.footer {
+    background-color: #870000;
+    color: #ffffff;
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+    margin-top: auto;
+}
+.footer-container {
+    padding: 0; /* Already handled by .footer */
+}
+
+/* --- RESPONSIVENESS (Media Query Consolidation) --- */
+
+@media (max-width: 768px) {
+    .complaint-form {
+        width: 95%;
+        padding: 15px;
+        margin: 5% 2.5%; /* Center form on small screens */
+    }
+
+    .form {
+        gap: 10px;
+    }
+
+    .header-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profile-section {
+        flex-direction: column;
+        margin-top: 10px;
+        gap: 10px;
+    }
+
+    .main-content {
+        flex-direction: column;
+    }
+
+    .content, .sidebar {
+        width: 100%;
+    }
+    
+    /* Center Track Status Buttons on Mobile */
+    .content a.Cbtn, .content a.Ubtn {
+        margin: 10px 5px;
+        display: block;
+        width: 90%;
+        max-width: none;
+    }
+}
+
+/* --- NEW: COMPLAINT HISTORY TABLE STYLES --- */
+.complaint-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.complaint-history-table th,
+.complaint-history-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 0.95em;
+}
+
+.complaint-history-table th {
+    background-color: #00009c;
+    color: white;
+    font-weight: 600;
+}
+
+.complaint-history-table tbody tr:nth-child(even) {
+    background-color: #f7f7f7;
+}
+
+.view-history-btn {
+    padding: 6px 10px;
+    background-color: #119238; /* Green for view button */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.view-history-btn:hover {
+    background-color: #0e7a2e;
+}
+
+
+
+
+
+
+
+/* Import Google font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    width: 100%;
+}
+
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 430px;
+    width: 100%;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.container .registration {
+    display: none;
+}
+
+#check:checked ~ .registration {
+    display: block;
+}
+
+#check:checked ~ .login {
+    display: none;
+}
+
+#check {
+    display: none;
+}
+
+.container .form {
+    padding: 2rem;
+}
+
+.form header {
+    font-size: 2rem;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.form input {
+    height: 60px;
+    width: 100%;
+    padding: 0 15px;
+    font-size: 17px;
+    margin-bottom: 1.3rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+}
+
+.form input:focus {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.form a {
+    font-size: 16px;
+    color: #009579;
+    text-decoration: none;
+}
+
+.form a:hover {
+    text-decoration: underline;
+}
+
+.form input.button {
+    color: #fff;
+    background: #009579;
+    font-size: 1.2rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 1.7rem;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.form input.button:hover {
+    background: #006653;
+    background-image: linear-gradient(150deg, rgb(255, 115, 0), rgb(255, 255, 255), rgb(0, 255, 106));
+    color: #1100ff;
+}
+
+.signup {
+    font-size: 17px;
+    text-align: center;
+}
+
+.signup label {
+    color: #009579;
+    cursor: pointer;
+}
+
+.signup label:hover {
+    text-decoration: underline;
+}
+
+/*---------------------Nav Bar---------------------------------------------------*/
+
+.header {
+    background-color: #00009c;
+    padding: 10px 20px;
+    width: 100%;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto; /* Center the header on the page */
+}
+
+
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    gap: 30px; /* Space between the menu items */
+}
+
+.nav-links a {
+    color: rgba(88, 88, 88, 0.836);
+    text-decoration: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 21px;
+}
+
+.nav-links a:hover {
+    background-color: #ff5500;
+    transition: background-color 0.3s;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* Profile Section with Login/Signup Buttons */
+.profile-section {
+    display:flex;
+    gap: 100px; /* Space between login and signup buttons */
+
+}
+.fas fa-bell :hover{
+  color: #000;
+}
+
+
+
+.links a {
+    display: block; /* Ensure each link is on a new line */
+    text-decoration: none;
+    color: #fff;
+    background-color: #119238;
+    padding: 15px 20px;
+    border-radius: 5px;
+    margin-bottom: 15px; /* Add some space between links */
+    line-height: normal;
+
+}
+.links a:hover {
+    background-color: #00009c;
+    color: #ffffff;
+}
+#home {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+#home:hover{
+  background-color: #00009c;
+  color: #ffffff;
+}
+.main-content {
+  display: flex;
+  height: 80vh;
+}
+.content, .sidebar {
+  padding: 20px;
+}
+
+.sidebar {
+  width: 20%;
+  background-color: #d4d4d4;
+  height: 80vh;
+}
+h1 {
+  color: #fff;
+  text-align: center;
+}
+.footer-container{
+  background-color: #870000;
+  color: #ffffff;
+  text-align: center;
+  padding: 15px;
+}
+
+
+.conect {
+    display: flex;
+    flex-direction: column;   /* stack label above button group */
+    align-items: left;      /* center everything horizontally */
+    margin: 50px 0;           /* spacing between Rural and Urban sections */
+    gap: 12px;                /* spacing between label and buttons */
+}
+
+.conect p2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;          /* allows buttons to wrap to next line if needed */
+    justify-content: left;
+    gap: 12px;                /* spacing between buttons */
+}
+
+.connect-btn {
+    padding: 10px 18px;
+    background-color: #119238;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.connect-btn:hover {
+    background-color: #00009c;
+    transform: translateY(-2px);
+}
+
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profile-section {
+        flex-direction: column;
+        margin-top: 10px;
+        gap: 10px;
+    }
+}
+
