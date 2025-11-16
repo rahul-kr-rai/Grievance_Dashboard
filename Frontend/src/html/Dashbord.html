@@ -54,8 +54,41 @@
             </div>
         </aside>
         <div class="content">
+<<<<<<< HEAD:Frontend/src/html/Dashbord.html
             <h2>Dashboard Overview</h2>
             <p>Welcome to your user dashboard. Use the sidebar to navigate to different sections.</p>
+=======
+            <div class="complaint-Submitted" style="margin-top: 5%;">
+                <h2 style="text-align: center;">Complain Details</h2>
+                <hr>
+                <p style="color: #00009c;">
+                  <b> Complained Date:</b> 
+                  <span id="complainedDate"></span>
+                </p>
+                
+                <script>
+                  // Get today's date
+                  const today = new Date();
+                
+                  // Format it as DD-MMM-YYYY (e.g., 07-Nov-2025)
+                  const options = { day: '2-digit', month: 'short', year: 'numeric' };
+                  const formattedDate = today.toLocaleDateString('en-GB', options).replace(/ /g, '-');
+                
+                  // Insert into the page
+                  document.getElementById("complainedDate").textContent = formattedDate;
+                </script>
+
+                <hr>
+                <p><b>Complaint Type: </b>Road</p>
+                <p><b>Message:</b> MY village’s road condition is very bad</p>
+                <p><b>Attachement:</b></p>
+                <a href="#" img src="/image/Complain%20Submitted.png" alt="Complain Submitted">View photo/video</a>
+                <br>
+                
+                <p><b>Your Complain ID:</b> RD202425</p>
+                <p><b>Expected Response:</b> 14-Days</p>
+            </div>
+>>>>>>> 2e9700a64ab5406b5ceb6dd3fac0cb9ec9a397a7:Login/Active Complain.html
         </div>
     </div>
     
