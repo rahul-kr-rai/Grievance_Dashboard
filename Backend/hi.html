@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow" />
+  <meta name="description" content="Join the InternHill team! Explore career opportunities to help us build the future of tech talent and virtual internships." />
+  <meta name="keywords" content="InternHill careers, jobs, EdTech jobs, web development jobs, remote jobs, Jaipur jobs" />
+  <meta name="author" content="Internhill Team" />
+  <link rel="canonical" href="https://internhill.in/careers.html" />
+  <link rel="icon" type="image/png" href="/assets/favicon.webp">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"></noscript>
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+  <link rel="stylesheet" href="style.css">
+
+  <title>Careers at InternHill | Join Our Team</title>
+</head>
+<style>
+    /* --- CAREERS PAGE SPECIFIC STYLES --- */
+
+.careers-page-content {
+    /* Add padding to account for the fixed header */
+    padding-top: 100px; 
+    min-height: 80vh; /* Ensure footer stays at the bottom */
+}
+
+/* Career Hero Section */
+.career-hero {
+    background-color: var(--secondary-color);
+    color: var(--bg-light);
+    text-align: center;
+    padding: var(--section-padding) 20px;
+}
+
+.career-hero h1 {
+    font-size: 2.8rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.career-hero p {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+    color: #f0f0f0;
+}
+
+.career-cta {
+    /* Style based on existing .cta button */
+    background: var(--primary-color);
+    border: none;
+    padding: 15px 30px;
+    font-weight: 600;
+    color: var(--bg-light);
+    border-radius: 25px;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.career-cta:hover {
+    background: #FF4D7B; /* Slightly lighter primary color on hover */
+    transform: scale(1.05);
+}
+
+/* Opening List Section */
+.openings-section {
+    background-color: #f9f9f9;
+}
+
+.openings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+.opening-item {
+    background: var(--bg-light);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 25px;
+    transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.opening-item:hover {
+    box-shadow: 0 5px 15px rgba(0, 32, 91, 0.1);
+    border-color: var(--primary-color);
+}
+
+.opening-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.opening-header h3 {
+    color: var(--secondary-color);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.opening-location {
+    background: #eaf3ff;
+    color: var(--secondary-color);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: var(--font-sm);
+    font-weight: 600;
+}
+.opening-location i {
+    margin-right: 5px;
+}
+
+.opening-item p {
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.apply-link {
+    color: var(--primary-color);
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.apply-link:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+.apply-link i {
+    margin-left: 5px;
+}
+
+/* No Role Info */
+.no-role-info {
+    text-align: center;
+    margin-top: 50px;
+    padding: 30px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+}
+
+.no-role-info p {
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+}
+
+/* Responsive adjustments for careers page */
+@media (max-width: 768px) {
+    .career-hero h1 {
+        font-size: 2rem;
+    }
+    .opening-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .opening-location {
+        margin-top: 5px;
+    }
+}
+</style>
+<body>
+  <header>
+  <div class="container header-content">
+    <div class="logo">
+      <a href="index.html"><img src="/assets/Logo.webp" alt="Internhill Logo" /></a>
+    </div>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Open Menu">
+      &#9776; </button>
+    <nav class="menu-bar" id="menu-bar">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#internships">Internships</a></li>
+        <li><a href="#"><span style="white-space: nowrap;">Open Source</span></a></li>
+        <li><a href="/verify.html">Verify</a></li>
+        <li><a href="/careers.html" class="active-page">Careers</a></li> 
+      </ul>
+    </nav>
+    <button class="apply-button" id="apply-nav-button" style="margin-left: 2%;" onclick="window.location.href='https://forms.gle/2fCNt2n4ezXMfdfj7'">Apply Now</button>
+  </div>
+  <hr>
+</header>
+  <main class="careers-page-content">
+    <section class="career-hero">
+      <div class="container">
+        <h1>Join the Team that’s Building the Future of Tech Talent</h1>
+        <p>At InternHill, your work directly empowers the next generation of developers and data scientists. Help us make industry experience accessible to every student, everywhere.</p>
+        <a href="#openings" class="cta career-cta">View Current Openings</a>
+      </div>
+    </section>
+
+    <section id="why-join" class="section">
+      <div class="container">
+        <h2>Why Work at InternHill?</h2>
+        <div class="reasons-grid">
+          <div class="reason-item">
+            <i class="fa-solid fa-rocket"></i>
+            <h3>Mission-Driven Impact</h3>
+            <p>Directly contribute to student success and career launch globally.</p>
+          </div>
+          <div class="reason-item">
+            <i class="fa-solid fa-lightbulb"></i>
+            <h3>Culture of Innovation</h3>
+            <p>We value bold ideas, rapid iteration, and continuous learning in EdTech.</p>
+          </div>
+          <div class="reason-item">
+            <i class="fa-solid fa-house-laptop"></i>
+            <h3>Flexible & Remote-First</h3>
+            <p>Embrace a work-from-anywhere approach focused on results and output.</p>
+          </div>
+          <div class="reason-item">
+            <i class="fa-solid fa-medal"></i>
+            <h3>Growth & Ownership</h3>
+            <p>Take charge of projects and benefit from professional development budgets.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="openings" class="section openings-section">
+      <div class="container">
+        <h2>Current Openings</h2>
+        <p class="section-description">We are looking for passionate, driven professionals to help us scale our mission. Find your role below!</p>
+        
+        <div class="openings-list">
+          <div class="opening-item">
+            <div class="opening-header">
+              <h3>Senior Backend Developer (Node.js/Python)</h3>
+              <span class="opening-location"><i class="fa-solid fa-location-dot"></i> Remote</span>
+            </div>
+            <p>You will lead the development of our core platform, ensuring scalability and performance for thousands of users.</p>
+            <a href="mailto:careers@internhill.in?subject=Application for Senior Backend Developer" class="apply-link">Apply Now <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          
+          <div class="opening-item">
+            <div class="opening-header">
+              <h3>Internship Project Designer (Tech & Content)</h3>
+              <span class="opening-location"><i class="fa-solid fa-location-dot"></i> Remote / Jaipur</span>
+            </div>
+            <p>Create cutting-edge, task-based projects in domains like AI/ML, MERN, and Data Science, directly shaping student learning.</p>
+            <a href="mailto:careers@internhill.in?subject=Application for Internship Project Designer" class="apply-link">Apply Now <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+
+          <div class="opening-item">
+            <div class="opening-header">
+              <h3>Digital Marketing Specialist</h3>
+              <span class="opening-location"><i class="fa-solid fa-location-dot"></i> Remote</span>
+            </div>
+            <p>Drive organic traffic, manage campaigns, and expand our reach to colleges and students across India.</p>
+            <a href="mailto:careers@internhill.in?subject=Application for Digital Marketing Specialist" class="apply-link">Apply Now <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+        
+        <div class="no-role-info">
+            <p>Don't see a role that fits you? We still want to hear from passionate individuals!</p>
+            <a href="mailto:careers@internhill.in?subject=General Application" class="cta">Send General Application</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="container footer-content">
+        <div class="footer-section about">
+            <h3>About Us</h3>
+            <img src="/assets/Logo.webp" alt="InternPortal Logo" style="width: 150px; height: 60px; background-color: aliceblue;padding:10px;border-radius: 5px;">
+            <p>We provide internship opportunities to gain hands on experience on industry-level projects</p>
+        </div>
+        <div class="footer-section links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="index.html#internships">Internships</a></li>
+                <li><a href="index.html#why-choose-us">Why Choose Us?</a></li>
+                <li><a href="/verify.html">Verify Certificate</a></li>
+                <li><a href="/careers.html">Careers</a></li> <li><a href="/privacy.html">Privacy Policy</a></li>
+                <li><a href="/terms.html">Terms of Service</a></li>
+            </ul>
+        </div>
+        <div class="footer-section contact">
+            <h3>Contact Us</h3>
+            <p><i class="fa-solid fa-envelope"></i> support@internhill.in</p>
+            <p><i class="fa-solid fa-envelope"></i> team@internhill.in</p>
+            <p><i class="fa-solid fa-phone"></i> +91 9608363982</p>
+            <p><i class="fa-solid fa-location-dot"></i> Jaipur, Rajsthan India</p>
+            <p></p>
+        </div>
+        <div class="footer-section social">
+            <h3>Follow Us</h3>
+            <br>
+            <br>
+            <a href="https://www.linkedin.com/company/internhill" style="margin-left: 0px;"><i class="fa-brands fa-linkedin fa-2xl"></i></a>
+            <a href="https://www.instagram.com/intern_hill/" style="margin-left: 20px;"><i class="fa-brands fa-instagram fa-2xl"></i></a>
+            <a href="https://www.facebook.com/login/" style="margin-left: 20px;"><i class="fa-brands fa-facebook fa-2xl"></i></a>
+            <a href="https://x.com/i/flow/login" style="margin-left: 20px;"><i class="fa-brands fa-twitter fa-2xl"></i></a> 
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 internHill.in All rights reserved.</p>
+    </div>
+</footer>
+  <script src="script.js"></script>
+</body>
+</html>

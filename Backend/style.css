@@ -1,0 +1,825 @@
+:root {
+  --primary-color: #E7194F;   /* Accent color */
+  --secondary-color: #00205B; /* Dark blue */
+  --bg-light: #FFFFFF;        /* White background */
+  --bg-dark: #00205B;         /* Footer background */
+  --text-dark: #00205B;       /* Dark text */
+  --container-max-width: 1200px;
+  --section-padding: 80px;
+  --gap: 70px;
+  --font-sm: 0.875rem;
+--font-md: 1rem;
+--font-lg: 1.25rem;
+--font-xl: 1.5rem;
+
+}
+
+/* Global Resets & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu-bar{
+  margin-left: 40%;
+}
+
+/* Container Wrapper */
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* HEADER */
+header {
+  width: 100%;
+  background: var(--bg-light);
+  border-bottom: 1px solid #eaeaea;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: background-color 0.3s;
+}
+header:hover {
+  background-color: #f9f9f9;
+}
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  
+}
+.logo {
+  display: flex;
+  align-items: center;
+  
+}
+.logo img {
+    max-width: 160px;
+    width: 100%;
+    height: auto;
+    margin-right: 10px;
+    object-fit: contain;
+    border-radius: 0;
+    display: block;
+}
+
+nav ul {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+}
+nav ul li a {
+  display: inline-block;
+  font-weight: 500;
+  font-size: large;
+  padding: 5px 15px; /* Keep padding consistent */
+}
+
+nav ul li a:hover {
+  background: var(--primary-color);
+  border-radius: 25px;
+  color: #ffffff;
+}
+
+nav ul li a:hover::after {
+  width: 100%;
+  
+}
+.cta {
+  background: var(--primary-color);
+  border: none;
+   padding: 15px 25px; /* Balanced padding */
+  min-width: 120px; /* Ensures consistent size */
+  font-weight: 600;
+  color: var(--bg-light);
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(231,25,79,0.3);
+  transition: background 0.3s, transform 0.3s;
+  margin-left: 50px;
+}
+.cta:hover {
+  background: var(--secondary-color);
+  transform: translateY(-2px);
+ 
+}
+
+
+/* Ensuring proper mobile responsiveness */
+@media screen and (max-width: 768px) {
+    .dropdown-menu {
+        position: static; /* Prevents overflow issues */
+        box-shadow: none;
+    }
+}
+
+
+
+/* HERO SECTION */
+.hero {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(rgba(0, 32, 91, 0.674), rgba(0, 0, 0, 0.877)),
+              url('/images/internhill-bgimg.webp')
+              no-repeat center center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+  padding: 0 20px;
+}
+.hero-content {
+  color: var(--bg-light);
+  z-index: 1;
+}
+.hero h1 {
+  font-size: 3.1rem;
+  margin-bottom: 1rem;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* SECTION HEADINGS */
+section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  font-size: 2rem;
+  padding-top: 20px;
+}
+section {
+  padding: var(--section-padding) 0;
+  background: var(--bg-light);
+}
+
+/* TOGGLE BUTTON GROUP */
+.toggle-group {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.toggle-group button {
+  background: var(--bg-light);
+  border: 2px solid #435480;
+  color: var(--secondary-color);
+  padding: 1em 1.2em;
+  margin: 10px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+.toggle-group button.active {
+  background:#435480;
+  color: var(--bg-light);
+}
+.toggle-group button:hover {
+  background: var(--primary-color);
+  color: var(--bg-light);
+  border: 2px solid var(--primary-color);
+}
+/* FEATURED INTERNSHIPS */
+.featured-internships .internship-list {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 20px;
+}
+#internships{
+  background-color: #ffffff2c;
+  padding: 20px 10px;
+}
+.internship-item {
+  background: var(--bg-light);
+  border: 2px solid #3F5881;
+  border-radius: 8px;
+  /* Removed extra top padding so the image sits flush at the top */
+  padding: 0 30px 30px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+  overflow: hidden;
+}
+.internship-item:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.719); /* Corrected property */
+  transform: translateY(-5px); /* Adds a slight lift effect */
+}
+
+
+/* Adjusted internship image padding */
+.internship-image {
+  width: 100%;
+  height: 270px;
+  object-fit: cover;
+  display: block;
+  margin-top:  10px;         /* No extra margin */
+  /* Add a bottom margin to separate image and text */
+  margin-bottom: 10px;
+}
+.apply-button {
+  background: var(--primary-color);
+  border: none;
+   padding: 15px 25px; /* Balanced padding */
+  min-width: 120px; /* Ensures consistent size */
+  font-weight: 600;
+  color: var(--bg-light);
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(231,25,79,0.3);
+  transition: background 0.3s, transform 0.3s;
+  
+  align-content: center;
+}
+.apply-button:hover {
+  background: var(--secondary-color);
+  transform: translateY(-2px);
+ 
+}
+
+/* Badge styling for Beginner-Friendly tag */
+.badge {
+  background: var(--primary-color);
+  color: var(--bg-light);
+  padding: 0.2em 0.6em;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+/* Section Styles */
+#why-choose-us, #mentors {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: var(--bg-light);
+}
+
+/* Why Choose Us */
+/* Why Choose Us Section */
+#why-choose-us {
+    text-align: center;
+    padding: 80px 20px;
+    background-color: var(--bg-light);
+}
+
+.section-description {
+    font-size: 18px;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+}
+
+.reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    justify-content: center;
+}
+
+.reason-item {
+    background: #eaeaea;
+    color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+}
+
+.reason-item i {
+    font-size: 36px;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.reason-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+/* FAQ Section */
+.faq .faq-item {
+    background: var(--bg-light);
+    margin-bottom: 15px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.faq .faq-item:hover {
+    background: #ffe0e0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.faq-question {
+    font-weight: 600;
+    position: relative;
+    padding-right: 30px;
+    cursor: pointer;
+}
+
+.faq-question::after {
+    content: '+';
+    position: absolute;
+    right: 0;
+    font-weight: 700;
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-question::after {
+    content: '-';
+}
+
+/* Smooth FAQ Answer Expansion */
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 150px; /* Adjust as needed */
+    opacity: 1;
+    padding-top: 10px;
+    color: #555;
+    font-style: italic;
+}
+
+/* FOOTER */
+
+.footer {
+    background: var(--secondary-color);
+    color: var(--bg-light);
+    padding: 60px 40px; /* Increased padding for a spacious layout */
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Dynamic resizing */
+    gap: 50px; /* Improved spacing between sections */
+    text-align: left;
+    margin-bottom: 40px; /* Added space below the content */
+}
+
+.footer-section h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.footer-section p, .footer-section a {
+    font-size: 16px;
+    color: var(--bg-light);
+    transition: color 0.3s ease;
+    line-height: 1.6; /* Improves readability */
+    gap: 10px; /* Added gap between lines */
+    margin-bottom: 10px; /* Added space between paragraphs */
+}
+
+.footer-section a:hover {
+    color: var(--primary-color);
+    text-decoration: underline; /* Adds subtle interaction */
+}
+.footer-section .social{
+    display: flex;
+    gap: 50px; /* Increased space between social icons */
+    margin-top: 20px; /* Added space above social icons */
+}
+.footer-section .social a {
+    font-size: 28px; /* Enlarged social icons */
+    margin-right: 15px;
+    color: var(--bg-light);
+    transition: transform 0.3s ease-in-out;
+}
+
+.footer-section .social a:hover {
+    transform: scale(1.3); /* Bigger hover effect */
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 25px; /* Added more space */
+    font-size: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 768px) {
+    #cap-button {
+    display: flex;
+    margin-top: 2rem;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 30%;
+    }
+}
+
+@media (max-width: 480px) {
+    #cap-button{
+    display: flex;
+    margin-top: 2rem;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 30%;
+    }
+
+    #why-choose-us {
+    text-align: center;
+    padding: 35px 20px;
+    background-color: var(--bg-light);
+}
+}
+
+
+/*********************** Capstone project ************************/
+
+.capstone-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem 1rem;
+  border-color: var(--secondary-color);
+  
+}
+
+.capstone-container .capstone-project {
+  background-color: #ffffff;
+  border: 2px solid var(--secondary-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.capstone-container .capstone-project:hover {
+  transform: translateY(-4px);
+}
+
+.capstone-container .capstone-project .title {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.capstone-container .capstone-content p {
+  margin: 0.5rem 0;
+  color: #444;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.capstone-container .capstone-project button {
+  display: flex;
+  margin-top: 2rem;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 45%;
+}
+
+.capstone-container .capstone-project button:hover {
+  background-color: var(--secondary-color);
+}
+
+.capstone-content #h3 {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.capstone-container .capstone-content ul {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0 1rem 0;
+  list-style-type: disc;
+}
+
+.capstone-container .capstone-content ul li {
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.capstone-project h2 {
+  color: var(--primary-color);
+}
+
+
+/* RESPONSIVE ADJUSTMENTS */
+@media (max-width: 768px) {
+  .benefits,
+  .testimonial-cards,
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+  nav ul li {
+    margin: 10px 0;
+  }
+}
+
+/* For medium screens: 2 per row */
+@media (max-width: 992px) {
+  .featured-internships .internship-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* For small screens: 1 per row */
+@media (max-width: 576px) {
+  .featured-internships .internship-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile responsive navbar*/
+/* MOBILE NAVIGATION */
+.menu-toggle {
+  display: none;
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dark);
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  nav {
+    width: 100%;
+  }
+
+  .menu-toggle {
+    display: block;
+    position: absolute;
+    right: 25px;
+    top: 15px;
+    z-index: 1100;
+  }
+
+  nav {
+    width: 100%;
+    position: relative;
+  }
+
+  nav ul {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: var(--bg-light);
+    padding: 10px 0;
+    margin-top: 10px;
+    border-top: 1px solid #ccc;
+    position: absolute;
+    left: 0;
+    top: 60px;
+    z-index: 1001;
+  }
+
+  nav.active ul {
+    display: flex;
+  }
+
+  nav ul li {
+    text-align: center;
+    margin: 1px 0;
+  }
+
+  .cta {
+    margin: 10px auto;
+    width: 90%;
+    min-width: unset;
+    text-align: center;
+  }
+}
+
+/* --- Mobile Header, Logo, and Menu Improvements --- */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    gap: 10px;
+  }
+  .logo {
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  nav {
+    width: 100%;
+    position: static;
+  }
+  nav ul {
+    position: static;
+    align-items: flex-start;
+    width: 100%;
+    height: 50%;
+    background: var(--bg-light);
+    border-top: none;
+    margin-top: 0;
+    box-shadow: none;
+  }
+  .cta {
+    margin: 10px 0 0 0;
+    width: 100%;
+    min-width: unset;
+    text-align: center;
+    display: block;
+  }
+}
+
+/* --- Extra Small Screens --- */
+@media (max-width: 480px) {
+  .logo img {
+    
+    
+    margin-top: 10px;
+    
+  }
+  .logo {
+    font-size: 0.9rem;
+  }
+  .header-content {
+    padding: 4px 0;
+    gap: 6px;
+  }
+  .cta {
+    font-size: 1rem;
+    padding: 15px 20px; /* Reduced padding for smaller screens */
+    max-width: 200px;
+  }
+}
+
+/* --- Hero Section Responsive Fix --- */
+@media (max-width: 768px) {
+  .hero {
+    height: auto;
+    min-height: 60vh;
+    padding: 40px 10px 30px 10px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;           /* Ensure content is centered horizontally */
+    text-align: center;            /* Center text for all children */
+  }
+  .hero-content {
+    padding: 0;
+    width: 100%;                   /* Take full width */
+    max-width: 500px;              /* Prevents stretching on larger phones */
+    margin: 0 auto;                /* Center horizontally */
+    display: flex;
+    flex-direction: column;
+    align-items: center;           /* Center all children */
+    justify-content: center;
+  }
+  .hero h1 {
+    font-size: 2rem;
+    word-break: break-word;        /* Prevents overflow */
+    margin-bottom: 1rem;
+    margin-top: 25%;
+  }
+  .hero p {
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  .apply-button {
+    width: 100%;
+    min-width: unset;
+    margin: 0 auto;
+    display: block;
+    font-size: 1rem;
+    padding: 15px 0;
+    max-width: 200px;              /* Prevents button from being too wide */
+  }
+  #apply-nav-button{
+    display: none;
+  }
+}
+
+/* For extra small screens */
+@media (max-width: 480px) {
+  .hero-content {
+    max-width: 95vw;
+    padding: 0 2vw;
+  }
+  .hero h1 {
+    font-size: 1.3rem;
+    margin-top: 25%;
+  }
+  .hero p {
+    font-size: 0.95rem;
+  }
+}
+
+
+
+
+
+
+
+/***********Menu icon for mobile view**********/
+
+/* Hide hamburger by default, show only on mobile */
+.menu-toggle {
+  display: none;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Optional: smooth transition for background or shadow on scroll */
+header {
+  transition: box-shadow 0.3s ease;
+}
+
+/* Desktop styles */
+.menu-bar ul {
+  display: flex;
+  list-style: none;
+  
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+  .menu-bar {
+    display: none;
+    position: absolute;
+    top: 70px; /* adjust as needed */
+    left: 0;
+    width: 100%;
+    background: #fff;
+    z-index: 100;
+  }
+  .menu-bar.active {
+    display: block;
+  }
+  .menu-bar ul {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+  
+}
+
+
+
+

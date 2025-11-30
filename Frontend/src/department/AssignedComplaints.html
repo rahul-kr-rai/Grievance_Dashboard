@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Assigned Complaints</title>
+    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="main.js"></script>
+    <script src="/Backend/db.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="AdminDashboard.html"><img src="/Frontend/src/image/logo.png" alt="Logo" style="height:60px; width: auto;"></a>
+            </div>
+
+            <nav class="nav-links">
+                <h1>Welcome Admin OfficerName</h1> 
+            </nav>
+
+            <div class="profile-section">
+                <a href="#" class="login-btn"><i class="fas fa-bell" style="color: #fbff00; font-size: 250%;"></i></a>
+                <a href="#" class="login-btn"><i class="fas fa-user-circle" style="color: #ffffff; font-size: 250%;"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <div class="sidebar-container">
+                <h1 style="color: #00009c;"><i class="fas fa-chart-line"></i> Dashboard</h1>
+                <br>
+                <div class="links">
+                    <a href="AdminDashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                    <a href="NewComplaints.html"><i class="fas fa-plus-circle"></i> New Complaints</a>
+                    <a href="AssignedComplaints.html" class="active-link"><i class="fas fa-tasks"></i> Assigned Complaints</a>
+    
+                    <a href="PendingComplaints.html"><i class="fas fa-hourglass-half"></i> Pending Complaints</a>
+                    <a href="ResolvedComplaints.html"><i class="fas fa-check-circle"></i> Resolved Complaints</a>
+                    <a href="EscalatedComplaints.html"><i class="fas fa-exclamation-triangle"></i> Escalated Complaints</a>
+                    <a href="AnalyticsReports.html"><i class="fas fa-chart-bar"></i> Analytics / Reports</a>
+                    <a href="/Frontend/index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </aside>
+        
+        <div class="content">
+            <h2><i class="fas fa-tasks"></i> Complaints Assigned for Follow-Up</h2>
+            
+            <div class="filter-actions-row">
+                <div class="search-filter">
+                    <input type="text" placeholder="Search by Officer or ID..." class="search-input">
+                    <select class="filter-select">
+                        <option value="">Filter by Assigned Officer</option>
+                        <option value="officerA">Officer A</option>
+                        <option value="officerB">Officer B</option>
+                        <option value="officerC">Officer C</option>
+                    </select>
+                </div>
+                <button class="export-button"><i class="fas fa-file-export"></i> Export Report</button>
+            </div>
+            
+            <section class="table-row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Citizen Name</th>
+                            <th>Assigned Officer</th>
+                            <th>Status</th>
+                            <th>Last Update</th>
+                            <th>Priority</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#12345</td>
+                            <td>Rajesh Kumar</td>
+                            <td>Officer A (Electricity)</td>
+                            <td class="status-progress">In Progress</td>
+                            <td>2 days ago</td>
+                            <td class="priority-medium">Medium</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12346</td>
+                            <td>Anita Sharma</td>
+                            <td>Officer B (Roads)</td>
+                            <td class="status-progress">In Progress</td>
+                            <td>Just now</td>
+                            <td class="priority-high">High</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12347</td>
+                            <td>Sunil Gupta</td>
+                            <td>Officer C (Corruption)</td>
+                            <td class="status-escalated">Escalated</td>
+                            <td>1 week ago</td>
+                            <td class="priority-critical">Critical</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12348</td>
+                            <td>Priya Das</td>
+                            <td>Officer A (Water)</td>
+                            <td class="status-progress">Waiting for Data</td>
+                            <td>4 days ago</td>
+                            <td class="priority-low">Low</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2025 TDP Project All Rights Reserved</p>
+        </div>
+    </footer>
+</body>
+</html>

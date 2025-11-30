@@ -22,14 +22,17 @@
       </div>
       <div class="button">
        <center> 
-                <button class="login-button" onclick="redirectToPage()">Citizen <i class="fas fa-sign-in-alt"></i></button>
-                <button class="signup-button" onclick="redirectToPage()"><i class="fas fa-user"></i> Department Login</button> 
+                <button class="login-button" onclick="redirectTocitizen()()">Citizen <i class="fas fa-sign-in-alt"></i></button>
+                <button class="signup-button" onclick="redirectToAdmin()()"><i class="fas fa-user"></i> Department Login</button> 
                 <P style="font-family: Arial, Helvetica, sans-serif;"><b><i class="fa fa-info-circle" style="font-size:20px;color:red"></i>  Please select user type.</b></P> 
        </center>
       </div>
       <script>
-        function redirectToPage() {
-            window.location.href = "/Frontend/src/html/login.html";  
+        function redirectTocitizen() {
+            window.location.href = "/Frontend/src/citizen/login.html";  
+        }
+        function redirectToAdmin() {
+            window.location.href = "/Frontend/src/department/login.html";  
         }
       </script>
 </body>

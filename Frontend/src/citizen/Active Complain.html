@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complaint Submitted - Confirmation</title>
+    <title>User Dashboard</title>
     <link rel="stylesheet" href="/Frontend/src/css/style.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="/Backend/db.js"></script>
 </head>
 
 <body>
@@ -32,7 +33,7 @@
                 <br>
                 <div class="links">
                     <a href="Raise New Complaint.html"><i class="fas fa-hand-rock"></i> Raise New Complaint</a>
-                    <a href="Active Complain.html" class="active-link"><i class="fas fa-bolt"></i> Active Complaint</a>
+                    <a id="active-complaint-link" href="Active Complain.html?view=active"><i class="fas fa-bolt"></i> <b>Active Complaint</b></a>
                     <a href="Track complain status.html"><i class="fab fa-telegram-plane"></i> Track Complaint Status</a>
                     <a href="GovSchame.html"><i class="fas fa-gavel"></i> Government Scheme</a>
                     <a href="Direct connect.html"><i class="fas fa-users"></i> Direct Connect</a>
@@ -40,20 +41,22 @@
                 </div>
             </div>
         </aside>
+        
         <div class="content">
-            <div class="complaint-Submitted" style="margin-top: 10%;">
-                <center><i class="fas fa-check-circle" style="color: #00b800; font-size: 500%;"></i>
-                    <br>
-                    <h2 style="color: #00b800; text-align: center;">Your Complaint is submitted</h2>
-                    <p>You will be notified once the complaint is resolved.</p>
-                </center>
-                <br>
-                <h3 style="text-align: center;">Your Complain ID: RD202425</h3>
-                <h3 style="text-align: center;">Expected Response: 14-Days</h3>
-                <p style="text-align: center; color: #555;">(Redirecting to Active Complaints in 3 seconds...)</p>
-                <br><br>
+            <div class="view-toggle" style="margin-bottom: 20px; text-align: center;">
+                <a href="Active Complain.html?view=active" 
+                   style="padding: 10px 15px; background-color: #119238; color: white; border-radius: 5px; text-decoration: none;">
+                   <i class="fas fa-bolt"></i> Active Complaint
+                </a>
+                <a href="Active Complain.html?view=history" 
+                   style="padding: 10px 15px; background-color: #ff3232; color: white; border-radius: 5px; text-decoration: none; margin-left: 10px;">
+                   <i class="fas fa-history"></i> Complaint History
+                </a>
             </div>
-        </div>
+            <div class="complaint-Submitted" style="margin-top: 5%;">
+                <p style="text-align: center; color: #555;">Loading complaint data...</p>
+            </div>
+            </div>
     </div>
 
     <footer class="footer">
@@ -61,7 +64,25 @@
             <p>&copy; 2025 TDP Project All Rights Reserved</p>
         </div>
     </footer>
-    <script src="/Frontend/src/script/newComplaint.js"></script>
-    </body>
+    <script>
+        // Synchronize sidebar active link based on view parameter
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewMode = urlParams.get('view') || 'active'; // Default to active
+            const link = document.getElementById('active-complaint-link');
+
+            if (link) {
+                // Remove existing active-link if present
+                document.querySelectorAll('.links a').forEach(a => a.classList.remove('active-link'));
+                
+                // Add active-link class if the URL matches what we expect for Active/History
+                if (window.location.pathname.endsWith('Active Complain.html')) {
+                    link.classList.add('active-link');
+                }
+            }
+        });
+    </script>
+    <script src="/Frontend/src/script/trackComplaint.js"></script>
+</body>
 
 </html>
