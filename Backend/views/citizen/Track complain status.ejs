@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/citizen-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/citizen-header') %>
+    <div class="main-content">
+        <%- include('../partials/citizen-sidebar') %>
+        
+        <div class="content">
+            <div class="complaint-Submitted" style="margin-top: 5%;">
+                <br><br>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

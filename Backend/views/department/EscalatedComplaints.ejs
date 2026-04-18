@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/admin-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/admin-header') %>
+    <div class="main-content">
+        <%- include('../partials/admin-sidebar') %>
+        
+        <div class="content">
+            <h2><i class="fas fa-exclamation-triangle"></i> Critical & Escalated Cases</h2>
+            
+            <div class="filter-actions-row">
+                <div class="search-filter">
+                    <input type="text" placeholder="Search by Officer or Priority..." class="search-input">
+                    <select class="filter-select">
+                        <option value="">Filter by Escalation Level</option>
+                        <option value="level1">Level 1 (Internal)</option>
+                        <option value="level2">Level 2 (Director)</option>
+                        <option value="level3">Level 3 (Minister)</option>
+                    </select>
+                </div>
+                <button class="contact-button"><i class="fas fa-headset"></i> Contact Authority</button>
+            </div>
+            
+            <section class="table-row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Citizen Name</th>
+                            <th>Category</th>
+                            <th>Escalation Level</th>
+                            <th>Raised By</th>
+                            <th>Days Open</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#12358</td>
+                            <td>Vikram Patel</td>
+                            <td>Corruption</td>
+                            <td class="level-high">Level 3</td>
+                            <td>Director A</td>
+                            <td class="days-open-high">45</td>
+                            <td><button class="action-btn-critical">Immediate Review</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12359</td>
+                            <td>Neha Sharma</td>
+                            <td>Infrastructure Failure</td>
+                            <td class="level-medium">Level 2</td>
+                            <td>Officer B</td>
+                            <td class="days-open-medium">15</td>
+                            <td><button class="action-btn-critical">Immediate Review</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12360</td>
+                            <td>Rajesh Kumar</td>
+                            <td>Misconduct</td>
+                            <td class="level-low">Level 1</td>
+                            <td>Officer C</td>
+                            <td class="days-open-low">3</td>
+                            <td><button class="action-btn-view">View Progress</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

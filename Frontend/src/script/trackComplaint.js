@@ -116,7 +116,7 @@ function viewHistoricalComplaintDetails(complaintId) {
     }
 }
 
-function loadActiveOrHistoryView() {
+async function loadActiveOrHistoryView() {
     // Check if this script should run on the current page
     if (!document.title.includes('User Dashboard')) {
         return;
@@ -130,7 +130,15 @@ function loadActiveOrHistoryView() {
 
     if (viewMode === 'history') {
         if (toggleContainer) toggleContainer.style.display = 'block'; 
-        const historyData = JSON.parse(localStorage.getItem('complaintHistory') || '[]');
+        
+        let historyData = [];
+        try {
+            const res = await fetch('/api/complaints/history');
+            historyData = await res.json();
+            if(!Array.isArray(historyData)) historyData = [];
+        } catch(e) {
+            console.error(e);
+        }
         
         container.innerHTML = getHistoryTableHTML(historyData);
         
@@ -154,17 +162,28 @@ function loadActiveOrHistoryView() {
 }
 
 
-function fetchTrackStatus() {
-    const activeComplaintData = localStorage.getItem('activeComplaint');
+async function fetchTrackStatus() {
+    let activeComplaintData = localStorage.getItem('activeComplaint');
+    if (!activeComplaintData) return;
     
     // Check if this script should run on the current page
     if (document.title.includes('Complaint Status')) { 
         const container = document.querySelector('.complaint-Submitted');
         if (!container) return;
         
-        if (activeComplaintData) {
-            const complaint = JSON.parse(activeComplaintData);
+        try {
+            const temp = JSON.parse(activeComplaintData);
+            const response = await fetch(`/api/complaints/${temp.id}`);
+            const complaint = await response.json();
             
+            // Re-sync local storage
+            localStorage.setItem('activeComplaint', JSON.stringify(complaint));
+            
+            if(complaint.error) {
+                 container.innerHTML = `<center><h2 style="color:red">Complaint NOT Found</h2></center>`;
+                 return;
+            }
+
             container.innerHTML = `
                 <center><i class="fas fa-cogs" style="color: rgb(0, 183, 255); font-size: 500%;"></i></center>
                 <br>
@@ -179,21 +198,25 @@ function fetchTrackStatus() {
                 </center>
                 <br><br>
             `;
-        } else {
-            container.innerHTML = `
-                <center><i class="fas fa-times-circle" style="color: #ff3232; font-size: 500%;"></i></center>
-                <br>
-                <center>
-                    <h2 style="text-align: center; color:#ff3232 ">No Active Complaint to Track</h2>
-                    <p>Please raise a new complaint first.</p>
-                    <br><br>
-                    <a href="#" class="Cbtn" onclick="cancelComplaint()">Cancel</a>
-                    <a href="#" class="Ubtn" onclick="updateComplaint()">Update</a>
-                    <br><br>
-                </center>
-            `;
+        } catch(e) {
+            console.error("Error fetching live tracking data:", e);
         }
     }
+}
+
+// Ensure the socket is available
+const socket = window.io ? io() : null;
+if(socket) {
+     socket.on('complaintUpdated', (updatedComplaint) => {
+          let active = localStorage.getItem('activeComplaint');
+          if(active) {
+                active = JSON.parse(active);
+                if(active.id === updatedComplaint.id) {
+                     // The citizen's active complaint was updated by admin!
+                     fetchTrackStatus();
+                }
+          }
+     });
 }
 
 

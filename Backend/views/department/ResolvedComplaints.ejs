@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/admin-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/admin-header') %>
+    <div class="main-content">
+        <%- include('../partials/admin-sidebar') %>
+        
+        <div class="content">
+            <h2><i class="fas fa-check-circle"></i> Resolved Complaints & Closure Review</h2>
+            
+            <div class="filter-actions-row">
+                <div class="search-filter">
+                    <input type="text" placeholder="Search by Resolution ID or Officer..." class="search-input">
+                    <select class="filter-select">
+                        <option value="">Filter by Resolution Score</option>
+                        <option value="5">Excellent (5/5)</option>
+                        <option value="4">Good (4/5)</option>
+                        <option value="3">Fair (3/5)</option>
+                    </select>
+                </div>
+                <button class="export-button"><i class="fas fa-download"></i> Download Resolved Log</button>
+            </div>
+            
+            <section class="table-row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Category</th>
+                            <th>Resolution Date</th>
+                            <th>Time to Resolve</th>
+                            <th>Resolution Score</th>
+                            <th>Closed By</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#12355</td>
+                            <td>Electricity</td>
+                            <td>15-Nov-2025</td>
+                            <td class="time-on-time">5 Days</td>
+                            <td class="score-high">5/5</td>
+                            <td>Officer A</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12356</td>
+                            <td>Road Damage</td>
+                            <td>12-Nov-2025</td>
+                            <td class="time-overdue">22 Days</td>
+                            <td class="score-medium">3/5</td>
+                            <td>Officer B</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12357</td>
+                            <td>Corruption</td>
+                            <td>01-Nov-2025</td>
+                            <td class="time-on-time">10 Days</td>
+                            <td class="score-high">4/5</td>
+                            <td>Officer C</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

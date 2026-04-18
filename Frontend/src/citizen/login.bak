@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Login & Registration | Portal</title>
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    <input type="checkbox" id="check">
+    
+    <div class="login form">
+      <header>Login</header>
+      <form action="#">
+        <input type="email" placeholder="Enter your email" required>
+        <input type="password" placeholder="Enter your password" required>
+        <a href="#">Forgot password?</a>
+        <input type="button" class="button" value="Login" onclick="redirectToPage()">
+      </form>
+      <div class="signup">
+        <span>Don't have an account? 
+          <label for="check">Register</label>
+        </span>
+      </div>
+    </div>
+
+    <div class="registration form">
+      <header>Register</header>
+      <form action="#">
+        <input type="text" placeholder="Enter your full name" required>
+        <input type="email" placeholder="Enter your email" required>
+        <input type="password" placeholder="Create a password" required>
+        <input type="password" placeholder="Confirm your password" required>
+        <input type="button" class="button" value="Register" onclick="redirectToPage()">
+      </form>
+      <div class="signup">
+        <span>Already have an account?
+          <label for="check">Login</label>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Redirect function as per your original logic
+    function redirectToPage() {
+      window.location.href = "Dashbord.html";
+    }
+  </script>
+</body>
+</html>

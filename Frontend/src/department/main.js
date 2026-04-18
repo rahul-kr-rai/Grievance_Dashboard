@@ -210,26 +210,32 @@ function handleTableActions(event) {
     console.log(`Complaint ID: ${complaintId}`);
     console.log(`Action Type: ${actionType}`);
     
-    // --- Implement Specific Action Logic Here (Redirect, Modal, AJAX) ---
-    switch (actionType) {
-        case 'view':
-        case 'update':
-        case 'view/assign':
-            // Redirect example:
-            // window.location.href = `view_complaint_details.html?id=${complaintId}`;
-            console.log(`ACTION: Opening detail view for ID ${complaintId}`);
-            break;
-            
-        case 'escalate':
-        case 'critical':
-            // Modal example:
-            // openEscalationModal(complaintId);
-            console.log(`ACTION: Prompting escalation confirmation for ID ${complaintId}`);
-            break;
-            
-        default:
-            console.log(`ACTION: Unhandled action type: ${actionType}`);
-            break;
+    console.log(`ACTION: Triggering backend state update for ID ${complaintId}`);
+
+    const currentPath = window.location.pathname.split('/').pop();
+    let newStatus = '';
+    
+    // Simplistic escalation workflow depending on the page we are rendering
+    if (currentPath === 'NewComplaints.html') {
+         newStatus = 'In Progress';
+    } else if (currentPath === 'AssignedComplaints.html') {
+         newStatus = 'Resolved';
+    } else if (currentPath === 'PendingComplaints.html') {
+         newStatus = 'Resolved';
+    } else if (currentPath === 'ResolvedComplaints.html') {
+         newStatus = 'Resolved'; // Already resolved
+    } else {
+         newStatus = 'Escalated';
+    }
+
+    if(newStatus && newStatus !== 'Resolved' || confirm(`Do you want to step this complaint to ${newStatus}?`)) {
+       fetch(`/api/complaints/${complaintId}/status`, {
+           method: 'PUT',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ status: newStatus })
+       }).then(res => res.json())
+         .then(data => alert(`Status updated to ${data.status}!`))
+         .catch(err => alert('Failed to update status.'));
     }
 }
 

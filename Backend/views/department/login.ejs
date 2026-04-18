@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin System | Operations Core</title>
+  
+  <!-- Modern Fonts and Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-dark: #ffffff;
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      --glass-bg: #ffffff;
+      --glass-border: #cbd5e1;
+      --accent: #10b981; /* Shifted from blue to green */
+      --accent-hover: #059669;
+      --text-main: #1f2937;
+      --text-muted: #64748b;
+      --input-bg: #f1f5f9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Abstract background blobs for premium feel */
+    .blob {
+      position: absolute;
+      filter: blur(90px);
+      z-index: -1;
+      opacity: 0.3;
+      border-radius: 50%;
+    }
+    .blob.blue { width: 500px; height: 500px; background: #e2e8f0; top: -150px; right: -100px; }
+    .blob.purple { width: 400px; height: 400px; background: #cbd5e1; bottom: -100px; left: -100px; }
+
+    /* Scene Wrapper for Animations */
+    .scene {
+      position: relative;
+      width: 100%;
+      max-width: 650px;
+      padding: 20px;
+      perspective: 1000px;
+    }
+
+    /* Glassmorphism Card Base */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 50px 40px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.95) translateY(20px);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-card.active {
+      position: relative;
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 5px;
+      letter-spacing: -0.5px;
+      color: var(--text-main);
+    }
+
+    p.subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      font-size: 0.95rem;
+      font-weight: 300;
+    }
+
+    /* Grid layout for massive forms */
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .input-wrapper.full-span {
+      grid-column: span 2;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 18px;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+      pointer-events: none;
+    }
+
+    input, select {
+      background: var(--input-bg);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px 16px 16px 50px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      width: 100%;
+      outline: none;
+      appearance: none;
+      transition: all 0.3s ease;
+    }
+    
+    select { cursor: pointer; }
+    select option { background: #ffffff; color: var(--text-main); }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15); /* Match emerald glow */
+      background: #ffffff;
+    }
+    
+    input:focus + i, input:focus ~ i, select:focus ~ i {
+      color: var(--accent);
+    }
+
+    ::-webkit-input-placeholder { color: #475569; }
+
+    /* Gender Sub-Grid */
+    .gender-wrapper {
+      grid-column: span 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin: 5px 0;
+      padding: 15px;
+      background: var(--input-bg);
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+    }
+    
+    .gender-wrapper span.label {
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .radio-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+    
+    .radio-box input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* Submit Action */
+    .action-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 30px;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px -10px var(--accent);
+    }
+    
+    .action-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 25px -10px var(--accent);
+    }
+    .action-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Footer Swapper */
+    .footer-swap {
+      text-align: center;
+      margin-top: 25px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    
+    .footer-swap a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 5px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    .footer-swap a:hover {
+      color: #60a5fa;
+      text-decoration: underline;
+    }
+
+    /* Responsiveness */
+    @media (max-width: 600px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+      .input-wrapper.full-span {
+        grid-column: span 1;
+      }
+      .gender-wrapper {
+        grid-column: span 1;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .glass-card {
+        padding: 40px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Ambience -->
+  <div class="blob blue"></div>
+  <div class="blob purple"></div>
+
+  <div class="scene">
+    
+    <!-- LOGIN VIEW -->
+    <div class="glass-card active" id="pane-login">
+      <h2>System Access</h2>
+      <p class="subtitle">Secure Department Gateway</p>
+
+      <div class="grid-container" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="input-wrapper">
+          <input type="email" id="login-email" placeholder="Official Email Address" required autocomplete="off">
+          <i class="fa-solid fa-envelope"></i>
+        </div>
+        
+        <div class="input-wrapper">
+          <input type="password" id="login-password" placeholder="Passphrase" required>
+          <i class="fa-solid fa-lock"></i>
+        </div>
+      </div>
+
+      <button class="action-btn" onclick="executeLogin()">Access Terminals</button>
+
+      <div class="footer-swap">
+        No clearance? <a onclick="swapPanes('pane-register')">Submit Enrollment</a>
+      </div>
+    </div>
+
+    <!-- REGISTRATION VIEW -->
+    <div class="glass-card" id="pane-register">
+      <h2>Department Enrollment</h2>
+      <p class="subtitle">Administrative Level Configuration</p>
+
+      <div class="grid-container">
+        
+        <div class="input-wrapper">
+          <input type="text" id="reg-name" placeholder="Full Official Name" required autocomplete="off">
+          <i class="fa-solid fa-id-badge"></i>
+        </div>
+        
+        <div class="input-wrapper">
+          <input type="tel" id="reg-mobile" placeholder="Mobile Carrier" required autocomplete="off">
+          <i class="fa-solid fa-phone"></i>
+        </div>
+
+        <div class="input-wrapper">
+          <input type="email" id="reg-email" placeholder="Official Email" required autocomplete="off">
+          <i class="fa-solid fa-at"></i>
+        </div>
+
+        <div class="input-wrapper">
+          <input type="password" id="reg-password" placeholder="Secure Password" required>
+          <i class="fa-solid fa-key"></i>
+        </div>
+
+        <div class="input-wrapper">
+          <select id="reg-state" onchange="updateDeptDistricts()">
+            <option value="" disabled selected>Select State</option>
+          </select>
+          <i class="fa-solid fa-gavel"></i>
+        </div>
+
+        <div class="input-wrapper">
+          <select id="reg-district" onchange="updateDeptBlocks()">
+            <option value="" disabled selected>Select District</option>
+          </select>
+          <i class="fa-solid fa-building"></i>
+        </div>
+
+        <div class="input-wrapper">
+          <select id="reg-block" onchange="updateDeptPanchayats()">
+            <option value="" disabled selected>Select Block</option>
+          </select>
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+
+        <div class="input-wrapper">
+          <select id="reg-panchayat">
+            <option value="" disabled selected>Select Panchyat</option>
+          </select>
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+
+        <div class="input-wrapper full-span">
+          <select id="reg-designation">
+            <option value="" disabled selected>Authorized Designation</option>
+            <option value="Officer">Officer Tier 1</option>
+            <option value="Investigator">Investigator</option>
+            <option value="Manager">Regional Manager</option>
+          </select>
+          <i class="fa-solid fa-briefcase"></i>
+        </div>
+
+        <div class="gender-wrapper">
+          <span class="label"><i class="fa-solid fa-venus-mars"></i> Gender:</span>
+          <label class="radio-box"><input type="radio" name="gender" value="Male"> Male</label>
+          <label class="radio-box"><input type="radio" name="gender" value="Female"> Female</label>
+          <label class="radio-box"><input type="radio" name="gender" value="Other"> Other</label>
+        </div>
+
+      </div>
+
+      <button class="action-btn" onclick="executeRegister()">Commit Registration</button>
+
+      <div class="footer-swap">
+        System active? <a onclick="swapPanes('pane-login')">Return to Gateway</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="dynamicAdmin.js"></script>
+  <script>
+    // Seamless UI Swap Logic
+    function swapPanes(targetId) {
+      document.querySelectorAll('.glass-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      document.getElementById(targetId).classList.add('active');
+    }
+
+    // Backend Execution Hook: Login
+    async function executeLogin() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      if(!email || !password) return alert("System Auth requires credentials.");
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await res.json();
+        if(res.ok) {
+           window.location.href = "AdminDashboard.html";
+        } else {
+           alert(data.error || "Authentication voided.");
+        }
+      } catch(err) {
+        alert("Server failed to respond.");
+      }
+    }
+
+    // Backend Execution Hook: Register
+    async function executeRegister() {
+      const name = document.getElementById('reg-name').value;
+      const mobile = document.getElementById('reg-mobile').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const state = document.getElementById('reg-state').value;
+      const district = document.getElementById('reg-district').value;
+      const block = document.getElementById('reg-block').value;
+      const panchayat = document.getElementById('reg-panchayat').value;
+      const designation = document.getElementById('reg-designation').value;
+      
+      const genderEle = document.querySelector('input[name="gender"]:checked');
+      const gender = genderEle ? genderEle.value : '';
+      
+      if(!email || !password || !name || !mobile || !state || !district || !gender || !block || !panchayat || !designation) {
+         return alert("Missing Parameters. Terminating write sequence.");
+      }
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, mobile, name, state, district, gender, block, panchayat, designation, role: 'admin' }) 
+        });
+        
+        const data = await res.json();
+        if(res.ok) {
+           alert("Clearance granted. Identity recorded.");
+           swapPanes('pane-login');
+           document.getElementById('login-email').value = email;
+           document.getElementById('login-password').value = password;
+        } else {
+           alert(data.error || "Enrollment rejected.");
+        }
+      } catch(err) {
+        alert("Server transmission failed.");
+      }
+    }
+
+    // Comprehensive India Geography Cascading Structure
+    const adminGeoData = {
+      "Maharashtra": {
+        "Mumbai": {
+          "Andheri": ["Versova", "Juhu", "Marol"],
+          "Borivali": ["Gorai", "Dahisar", "Magathane"]
+        },
+        "Pune": {
+          "Haveli": ["Khadakwasla", "Hinjawadi", "Wagholi"],
+          "Mulshi": ["Pirangut", "Paud", "Ghotawade"]
+        }
+      },
+      "Bihar": {
+        "Patna": {
+          "Danapur": ["Khagaul", "Digha", "Maner"],
+          "Phulwari": ["Janipur", "Kurkuri", "Soraora"]
+        },
+        "Gaya": {
+          "Bodhgaya": ["Mocharim", "Mastpura", "Bakraur"],
+          "Tikari": ["Alipur", "Nishiyari", "Rupau"]
+        }
+      },
+      "Uttar Pradesh": {
+        "Lucknow": {
+          "Bakshi Ka Talab": ["Asthi", "Bhauli", "Kathwara"],
+          "Sarojini Nagar": ["Bijnor", "Gauri", "Khandak"]
+        },
+        "Kanpur": {
+          "Kalyanpur": ["Bithoor", "Nawabganj", "Mandhana"],
+          "Bidhnu": ["Ramaipur", "Sen Paschim", "Majhawan"]
+        }
+      }
+    };
+
+    window.onload = function() {
+      const stateSelect = document.getElementById("reg-state");
+      for (let state in adminGeoData) {
+        stateSelect.add(new Option(state, state));
+      }
+    };
+
+    function updateDeptDistricts() {
+      const stateSelect = document.getElementById("reg-state");
+      const districtSelect = document.getElementById("reg-district");
+      const blockSelect = document.getElementById("reg-block");
+      const panchayatSelect = document.getElementById("reg-panchayat");
+
+      districtSelect.innerHTML = '<option value="" disabled selected>Select District</option>';
+      blockSelect.innerHTML = '<option value="" disabled selected>Select Block</option>';
+      panchayatSelect.innerHTML = '<option value="" disabled selected>Select Panchyat</option>';
+
+      const selectedState = stateSelect.value;
+      if (adminGeoData[selectedState]) {
+        for (let district in adminGeoData[selectedState]) {
+          districtSelect.add(new Option(district, district));
+        }
+      }
+    }
+
+    function updateDeptBlocks() {
+      const stateSelect = document.getElementById("reg-state");
+      const districtSelect = document.getElementById("reg-district");
+      const blockSelect = document.getElementById("reg-block");
+      const panchayatSelect = document.getElementById("reg-panchayat");
+
+      blockSelect.innerHTML = '<option value="" disabled selected>Select Block</option>';
+      panchayatSelect.innerHTML = '<option value="" disabled selected>Select Panchyat</option>';
+
+      const state = stateSelect.value;
+      const district = districtSelect.value;
+
+      if (adminGeoData[state] && adminGeoData[state][district]) {
+        for (let block in adminGeoData[state][district]) {
+          blockSelect.add(new Option(block, block));
+        }
+      }
+    }
+
+    function updateDeptPanchayats() {
+      const stateSelect = document.getElementById("reg-state");
+      const districtSelect = document.getElementById("reg-district");
+      const blockSelect = document.getElementById("reg-block");
+      const panchayatSelect = document.getElementById("reg-panchayat");
+
+      panchayatSelect.innerHTML = '<option value="" disabled selected>Select Panchyat</option>';
+
+      const state = stateSelect.value;
+      const district = districtSelect.value;
+      const block = blockSelect.value;
+
+      if (adminGeoData[state] && adminGeoData[state][district] && adminGeoData[state][district][block]) {
+        adminGeoData[state][district][block].forEach(panchayat => {
+          panchayatSelect.add(new Option(panchayat, panchayat));
+        });
+      }
+    }
+  </script>
+</body>
+</html>

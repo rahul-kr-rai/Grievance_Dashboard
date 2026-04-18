@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/citizen-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/citizen-header') %>
+    <div class="main-content">
+        <%- include('../partials/citizen-sidebar') %>
+        
+        <div class="content">
+            <div class="complaint-form">
+                <h2 style="color: red;"><i class="fas fa-hand-rock"></i> Raise New Complaint</h2>
+                <form action="Complain submitted.html" class="form" onsubmit="saveComplaintData(event)">
+                    <div class="select-complain">
+                        <select name="complaint" id="complaint" required>
+                            <option value="">Select Complain Type</option> 
+                            <option value="Road">Road</option>
+                            <option value="Water">Water</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Cleaness">Cleaness</option>
+                            <option value="Gov.Scheme Benifit">Gov.Scheme Benifit</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="Issue">
+                        <textarea name="description" id="description" placeholder="Describe Your Issue" required></textarea>
+                    </div>
+                    <div class="file-upload">
+                        <label for="file">Attached any photo/video</label>
+                        <input type="file" name="file" id="file" class="file" >
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

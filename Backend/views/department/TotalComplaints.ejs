@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/admin-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/admin-header') %>
+    <div class="main-content">
+        <%- include('../partials/admin-sidebar') %>
+        
+        <div class="content">
+            <h2><i class="fas fa-list-alt"></i> All 120 Complaints (Total Register)</h2>
+            
+            <div class="filter-actions-row">
+                <div class="search-filter">
+                    <input type="text" placeholder="Search across all complaints (ID, Citizen, Officer)..." class="search-input" style="width: 350px;">
+                    <select class="filter-select">
+                        <option value="">Filter by Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                </div>
+                <button class="export-button"><i class="fas fa-file-excel"></i> Export All Data</button>
+            </div>
+            
+            <section class="table-row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Citizen Name</th>
+                            <th>Category</th>
+                            <th>Date Received</th>
+                            <th>Status</th>
+                            <th>Assigned Officer</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#12345</td>
+                            <td>Rajesh Kumar</td>
+                            <td>Electricity</td>
+                            <td>24-Sep-2025</td>
+                            <td class="status-pending">Pending</td>
+                            <td>Officer A</td>
+                            <td><button class="action-btn-update">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12346</td>
+                            <td>Anita Sharma</td>
+                            <td>Road Issues</td>
+                            <td>25-Sep-2025</td>
+                            <td class="status-progress">In Progress</td>
+                            <td>Officer B</td>
+                            <td><button class="action-btn-update">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12355</td>
+                            <td>Priya Das</td>
+                            <td>Water Supply</td>
+                            <td>15-Sep-2025</td>
+                            <td class="status-resolved">Resolved</td>
+                            <td>Officer C</td>
+                            <td><button class="action-btn-update">View</button></td>
+                        </tr>
+                        </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

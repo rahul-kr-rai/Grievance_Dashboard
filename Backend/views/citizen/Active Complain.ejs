@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/citizen-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/citizen-header') %>
+    <div class="main-content">
+        <%- include('../partials/citizen-sidebar') %>
+        
+        <div class="content">
+            <div class="view-toggle" style="margin-bottom: 20px; text-align: center;">
+                <a href="Active Complain.html?view=active" 
+                   style="padding: 10px 15px; background-color: #119238; color: white; border-radius: 5px; text-decoration: none;">
+                   <i class="fas fa-bolt"></i> Active Complaint
+                </a>
+                <a href="Active Complain.html?view=history" 
+                   style="padding: 10px 15px; background-color: #ff3232; color: white; border-radius: 5px; text-decoration: none; margin-left: 10px;">
+                   <i class="fas fa-history"></i> Complaint History
+                </a>
+            </div>
+            <div class="complaint-Submitted" style="margin-top: 5%;">
+                <p style="text-align: center; color: #555;">Loading complaint data...</p>
+            </div>
+            </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

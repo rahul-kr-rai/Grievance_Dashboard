@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/admin-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/admin-header') %>
+    <div class="main-content">
+        <%- include('../partials/admin-sidebar') %>
+        
+        <div class="content">
+            <h2><i class="fas fa-inbox"></i> New & Unassigned Complaints</h2>
+            
+            <div class="filter-actions-row">
+                <div class="search-filter">
+                    <input type="text" placeholder="Search by ID or Citizen Name..." class="search-input">
+                    <select class="filter-select">
+                        <option value="">Filter by Category</option>
+                        <option value="water">Water</option>
+                        <option value="roads">Roads</option>
+                        <option value="electricity">Electricity</option>
+                    </select>
+                </div>
+                <button class="assign-button"><i class="fas fa-hand-holding"></i> Assign Selected</button>
+            </div>
+            
+            <section class="table-row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox"></th>
+                            <th>Complaint ID</th>
+                            <th>Citizen Name</th>
+                            <th>Category</th>
+                            <th>Date Submitted</th>
+                            <th>Status</th>
+                            <th>Action</th> </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>#12348</td>
+                            <td>Ravi Verma</td>
+                            <td>Water Supply</td>
+                            <td>17-Nov-2025</td>
+                            <td class="status-new">New</td>
+                            <td><button class="action-btn-view">View/Assign</button></td> 
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>#12349</td>
+                            <td>Preeti Singh</td>
+                            <td>Road Damage</td>
+                            <td>16-Nov-2025</td>
+                            <td class="status-new">New</td>
+                            <td><button class="action-btn-view">View/Assign</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>#12350</td>
+                            <td>Mohan Deshmukh</td>
+                            <td>Electricity Billing</td>
+                            <td>16-Nov-2025</td>
+                            <td class="status-new">New</td>
+                            <td><button class="action-btn-view">View/Assign</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

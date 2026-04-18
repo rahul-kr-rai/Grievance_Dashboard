@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/citizen-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/citizen-header') %>
+    <div class="main-content">
+        <%- include('../partials/citizen-sidebar') %>
+        
+        <div class="content">
+            <h2>Connect with your local government</h2>
+            <br><br>
+            <!----------------------------------- Option to connect ---------------------------------->
+            <div class="conect">
+                <p2>Rural:</p2>
+                <div class="button-group">
+                    <button class="connect-btn"><i class="fas fa-comment"></i> Mukhiya</button>
+                    <button class="connect-btn"><i class="fas fa-comment"></i> Sarpanch</button>
+                    <button class="connect-btn"><i class="fas fa-comment"></i> Ward Member</button>
+                    <button class="connect-btn"><i class="fas fa-comment"></i> BDO/CEO</button>
+                </div>
+            </div>
+            <div class="conect">
+                <p2>Urban:</p2>
+                <div class="button-group">
+                    <button class="connect-btn"><i class="fas fa-comment"></i> Nagar Nigam</button>
+                    <button class="connect-btn"><i class="fas fa-comment"></i> Nagar Panchayat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!----------------------------------- Modal ---------------------------------->
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal" id="connect-modal">
+        <div class="modal-header">
+            <h3>Connect Options</h3>
+        </div>
+        <div class="modal-content">
+            <div id="connect-options">
+                <a id="whatsapp-link" href="#" target="_blank"><i class="fab fa-whatsapp"></i> Connect on WhatsApp</a>
+                <a id="phone-link" href="#"><i class="fas fa-phone"></i> Call</a>
+
+                <!-- Chat box -->
+                <div class="chat-box">
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input-field" placeholder="Type a message...">
+                    <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+                    <!-- File attachment -->
+                    <label for="chat-attachment" class="attach-btn">
+                        <i class="fas fa-paperclip"></i>
+                    </label>
+                    <input type="file" id="chat-attachment" style="display:none" accept="image/*,video/*,.pdf,.doc,.docx,.txt">
+                </div>
+            </div>
+
+        </div>
+            <button class="close-btn" id="close-modal">
+    <i class="fas fa-times"></i>
+</button>
+
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

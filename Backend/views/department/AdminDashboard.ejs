@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/admin-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/admin-header') %>
+    <div class="main-content">
+        <%- include('../partials/admin-sidebar') %>
+        
+        <div class="content">
+            <h2>Admin Dashboard Overview</h2>
+            
+            <section class="kpi-row">
+                <a href="TotalComplaints.html">
+                    <div class="kpi-card">
+                        <p>Total Complaints</p>
+                        <h1 style="color: #1a237e;">120</h1>
+                    </div>
+                </a>
+                <a href="PendingComplaints.html">
+                    <div class="kpi-card">
+                        <p>Complaints in Progress</p>
+                        <h1 style="color:#ffc107;">45</h1>
+                    </div>
+                </a>
+                <a href="ResolvedComplaints.html">
+                    <div class="kpi-card">
+                        <p>Resolved Complaints</p>
+                        <h1 style="color: #28a745;">60</h1>
+                    </div>
+                </a>
+                <a href="EscalatedComplaints.html">
+                    <div class="kpi-card">
+                        <p>Escalated Complaints</p>
+                        <h1 style="color: #dc3545;">15</h1>
+                    </div>
+                </a>
+            </section>
+
+            <section class="charts-row">
+                <div class="chart-box category-chart">
+                    <h3>Complaint Categories</h3>
+                    <div style="height: 250px;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-box time-chart">
+                    <h3>Complaints Over Time</h3>
+                    <div style="height: 250px;">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="table-row">
+                <h3>Recent Complaint Details</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Citizen Name</th>
+                            <th>Category</th>
+                            <th>Date Received</th>
+                            <th>Status</th>
+                            <th>Assigned Officer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#12345</td>
+                            <td>Rajesh Kumar</td>
+                            <td>Electricity</td>
+                            <td>24-Sep-2025</td>
+                            <td style="color: orange; font-weight: bold;">Pending</td>
+                            <td>Officer A</td>
+                        </tr>
+                        <tr>
+                            <td>#12346</td>
+                            <td>Anita Sharma</td>
+                            <td>Road Issues</td>
+                            <td>25-Sep-2025</td>
+                            <td style="color: green; font-weight: bold;">In Progress</td>
+                            <td>Officer B</td>
+                        </tr>
+                        <tr>
+                            <td>#12347</td>
+                            <td>Sunil Gupta</td>
+                            <td>Corruption</td>
+                            <td>21-Sep-2025</td>
+                            <td style="color: red; font-weight: bold;">Escalated</td>
+                            <td>Officer C</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

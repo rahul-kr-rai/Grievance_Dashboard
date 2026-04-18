@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/admin-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/admin-header') %>
+    <div class="main-content">
+        <%- include('../partials/admin-sidebar') %>
+        
+        <div class="content">
+            <h2><i class="fas fa-tasks"></i> Complaints Assigned for Follow-Up</h2>
+            
+            <div class="filter-actions-row">
+                <div class="search-filter">
+                    <input type="text" placeholder="Search by Officer or ID..." class="search-input">
+                    <select class="filter-select">
+                        <option value="">Filter by Assigned Officer</option>
+                        <option value="officerA">Officer A</option>
+                        <option value="officerB">Officer B</option>
+                        <option value="officerC">Officer C</option>
+                    </select>
+                </div>
+                <button class="export-button"><i class="fas fa-file-export"></i> Export Report</button>
+            </div>
+            
+            <section class="table-row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Citizen Name</th>
+                            <th>Assigned Officer</th>
+                            <th>Status</th>
+                            <th>Last Update</th>
+                            <th>Priority</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#12345</td>
+                            <td>Rajesh Kumar</td>
+                            <td>Officer A (Electricity)</td>
+                            <td class="status-progress">In Progress</td>
+                            <td>2 days ago</td>
+                            <td class="priority-medium">Medium</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12346</td>
+                            <td>Anita Sharma</td>
+                            <td>Officer B (Roads)</td>
+                            <td class="status-progress">In Progress</td>
+                            <td>Just now</td>
+                            <td class="priority-high">High</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12347</td>
+                            <td>Sunil Gupta</td>
+                            <td>Officer C (Corruption)</td>
+                            <td class="status-escalated">Escalated</td>
+                            <td>1 week ago</td>
+                            <td class="priority-critical">Critical</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>#12348</td>
+                            <td>Priya Das</td>
+                            <td>Officer A (Water)</td>
+                            <td class="status-progress">Waiting for Data</td>
+                            <td>4 days ago</td>
+                            <td class="priority-low">Low</td>
+                            <td><button class="action-btn-view">View Details</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

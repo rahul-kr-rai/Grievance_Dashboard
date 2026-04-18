@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/admin-head') %>
+    <% if (locals.pageTitle) { %><title><%= pageTitle %></title><% } %>
+    <% if (locals.extraHead) { %><%- extraHead %><% } %>
+</head>
+<body>
+    <%- include('../partials/admin-header') %>
+    <div class="main-content">
+        <%- include('../partials/admin-sidebar') %>
+        
+        <div class="content">
+            <h2><i class="fas fa-hourglass-half"></i> Pending & Stalled Complaints</h2>
+            
+            <div class="filter-actions-row">
+                <div class="search-filter">
+                    <input type="text" placeholder="Search by Citizen or Officer..." class="search-input">
+                    <select class="filter-select">
+                        <option value="">Filter by Days Pending</option>
+                        <option value="7">Over 7 Days</option>
+                        <option value="30">Over 30 Days</option>
+                    </select>
+                </div>
+                <button class="escalate-button"><i class="fas fa-level-up-alt"></i> Escalate Selected</button>
+            </div>
+            
+            <section class="table-row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox"></th>
+                            <th>Complaint ID</th>
+                            <th>Citizen Name</th>
+                            <th>Category</th>
+                            <th>Assigned Officer</th>
+                            <th>Days Pending</th>
+                            <th>Last Action Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>#12351</td>
+                            <td>Karanjeet Kaur</td>
+                            <td>Roads</td>
+                            <td>Officer B</td>
+                            <td class="days-pending-high">12</td>
+                            <td>05-Nov-2025</td>
+                            <td><button class="action-btn-escalate">Escalate</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>#12352</td>
+                            <td>Sunita Rao</td>
+                            <td>Water Supply</td>
+                            <td>Officer A</td>
+                            <td class="days-pending-medium">5</td>
+                            <td>12-Nov-2025</td>
+                            <td><button class="action-btn-update">View/Update</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>#12353</td>
+                            <td>Amit Singh</td>
+                            <td>Sanitation</td>
+                            <td>Officer C</td>
+                            <td class="days-pending-high">25</td>
+                            <td>23-Oct-2025</td>
+                            <td><button class="action-btn-escalate">Escalate</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>#12354</td>
+                            <td>Fatima Shaikh</td>
+                            <td>Property Tax</td>
+                            <td>Officer D</td>
+                            <td class="days-pending-low">2</td>
+                            <td>15-Nov-2025</td>
+                            <td><button class="action-btn-update">View/Update</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+    </div>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>

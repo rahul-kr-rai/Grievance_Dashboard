@@ -1,6 +1,6 @@
 // --- 3. COMPLAINT SUBMISSION AND STORAGE LOGIC (Raise New Complaint.html) ---
 
-function saveComplaintData(event) {
+async function saveComplaintData(event) {
     event.preventDefault(); 
 
     const form = event.target;
@@ -16,26 +16,32 @@ function saveComplaintData(event) {
         console.error("Corrupted active complaint data found, starting fresh.");
     }
     
-    // Check for existing ID if updating, otherwise generate a new one
-    const complaintID = isUpdate && existingComplaint.id ? existingComplaint.id : 'RD' + Math.floor(Math.random() * 100000);
-    const date = isUpdate && existingComplaint.date ? existingComplaint.date : new Date().toLocaleDateString('en-GB');
+    // Create FormData for the backend POST
+    const formData = new FormData();
+    formData.append('type', complaintType);
+    formData.append('description', description);
+    formData.append('isUpdate', isUpdate);
+    if(isUpdate && existingComplaint.id) formData.append('id', existingComplaint.id);
+    if(attachmentFile) formData.append('file', attachmentFile);
 
-    let complaint = {
-        id: complaintID,
-        date: date,
-        type: complaintType,
-        message: description,
-        attachmentName: attachmentFile ? attachmentFile.name : (existingComplaint.attachmentName || 'None'),
-        attachmentPath: attachmentFile ? URL.createObjectURL(attachmentFile) : (existingComplaint.attachmentPath || '#'), 
-        expectedResponse: '14-Days',
-        status: isUpdate ? 'Under process (Updated)' : 'Under process...'
-    };
+    try {
+        const response = await fetch('/api/complaints', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const complaint = await response.json();
 
-    localStorage.setItem('activeComplaint', JSON.stringify(complaint));
-    localStorage.removeItem('updateMode'); // Clear the update flag
-    
-    // Redirect to the confirmation page
-    window.location.href = "Complain submitted.html";
+        // Update local storage so other legacy scripts can still read active user state smoothly for now
+        localStorage.setItem('activeComplaint', JSON.stringify(complaint));
+        localStorage.removeItem('updateMode'); // Clear the update flag
+        
+        // Redirect to the confirmation page
+        window.location.href = "Complain submitted.html";
+    } catch (err) {
+        console.error("Error saving complaint to backend:", err);
+        alert("Failed to save complaint. Please try again or check backend connection.");
+    }
 }
 
 // 🌟 FINAL FIX: Robust Form Population and State Cleanup 🌟
