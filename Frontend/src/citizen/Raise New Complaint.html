@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
     <link rel="stylesheet" href="/Frontend/src/css/style.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <script src="/Backend/db.js"></script>    
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="/Backend/db.js"></script>
 </head>
 
 <body>
@@ -20,8 +21,10 @@
                 <h1>Welcome Rahul</h1>
             </nav>
             <div class="profile-section">
-                <a href="/Frontend/src/index.html" class="login-btn"><i class="fas fa-bell" style="color: #fbff00; font-size: 250%;"></i></a>
-                <a href="/Frontend/src/index.html" class="login-btn"><i class="fas fa-user-circle" style="color: #ffffff; font-size: 250%;"></i></a>
+                <a href="/Frontend/src/index.html" class="login-btn"><i class="fas fa-bell"
+                        style="color: #fbff00; font-size: 250%;"></i></a>
+                <a href="/Frontend/src/index.html" class="login-btn"><i class="fas fa-user-circle"
+                        style="color: #ffffff; font-size: 250%;"></i></a>
             </div>
         </div>
     </header>
@@ -32,9 +35,12 @@
                 <h1 style="color: #00009c;"><i class="fas fa-home"></i> Dashboard</h1>
                 <br>
                 <div class="links">
-                    <a href="Raise New Complaint.html" class="active-link" style="background-color: red; color: #fff !important; border-left: 15px solid red; "><i class="fas fa-hand-rock"></i><b> Raise New Complaint</b></a>
+                    <a href="Raise New Complaint.html" class="active-link"
+                        style="background-color: red; color: #fff !important; border-left: 15px solid red; "><i
+                            class="fas fa-hand-rock"></i><b> Raise New Complaint</b></a>
                     <a href="Active Complain.html"><i class="fas fa-bolt"></i> Active Complaint</a>
-                    <a href="Track complain status.html"><i class="fab fa-telegram-plane"></i> Track Complaint Status</a>
+                    <a href="Track complain status.html"><i class="fab fa-telegram-plane"></i> Track Complaint
+                        Status</a>
                     <a href="GovSchame.html"><i class="fas fa-gavel"></i> Government Scheme</a>
                     <a href="Direct connect.html"><i class="fas fa-users"></i> Direct Connect</a>
                     <a href="/Frontend/src/index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -47,7 +53,7 @@
                 <form action="Complain submitted.html" class="form" onsubmit="saveComplaintData(event)">
                     <div class="select-complain">
                         <select name="complaint" id="complaint" required>
-                            <option value="">Select Complain Type</option> 
+                            <option value="">Select Complain Type</option>
                             <option value="Road">Road</option>
                             <option value="Water">Water</option>
                             <option value="Electricity">Electricity</option>
@@ -57,11 +63,12 @@
                         </select>
                     </div>
                     <div class="Issue">
-                        <textarea name="description" id="description" placeholder="Describe Your Issue" required></textarea>
+                        <textarea name="description" id="description" placeholder="Describe Your Issue"
+                            required></textarea>
                     </div>
                     <div class="file-upload">
                         <label for="file">Attached any photo/video</label>
-                        <input type="file" name="file" id="file" class="file" >
+                        <input type="file" name="file" id="file" class="file">
                     </div>
                     <button type="submit">Submit</button>
                 </form>
@@ -73,6 +80,7 @@
             <p>&copy; 2025 TDP Project All Rights Reserved</p>
         </div>
     </footer>
+    <script src="/Frontend/src/script/profile.js"></script>
     <script src="/Frontend/src/script/newComplaint.js"></script>
 </body>
 

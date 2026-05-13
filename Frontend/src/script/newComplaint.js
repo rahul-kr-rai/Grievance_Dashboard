@@ -21,17 +21,30 @@ function saveComplaintData(event) {
     const date = isUpdate && existingComplaint.date ? existingComplaint.date : new Date().toLocaleDateString('en-GB');
 
     let complaint = {
-        id: complaintID,
-        date: date,
+        citizenName: localStorage.getItem('loggedInCitizenName') || 'Rahul Kumar',
         type: complaintType,
         message: description,
         attachmentName: attachmentFile ? attachmentFile.name : (existingComplaint.attachmentName || 'None'),
-        attachmentPath: attachmentFile ? URL.createObjectURL(attachmentFile) : (existingComplaint.attachmentPath || '#'), 
-        expectedResponse: '14-Days',
-        status: isUpdate ? 'Under process (Updated)' : 'Under process...'
+        attachmentPath: attachmentFile ? URL.createObjectURL(attachmentFile) : (existingComplaint.attachmentPath || '#')
     };
 
-    localStorage.setItem('activeComplaint', JSON.stringify(complaint));
+    if (isUpdate && existingComplaint.id) {
+        complaint.id = existingComplaint.id;
+    }
+
+    // Call submitComplaintToDB from db.js
+    if (typeof submitComplaintToDB === 'function') {
+        const generatedId = submitComplaintToDB(complaint, isUpdate);
+        
+        // Save to activeComplaint so confirmation page or old logic can still use it
+        complaint.id = generatedId;
+        complaint.status = isUpdate ? 'Under process (Updated)' : 'New';
+        complaint.dateSubmitted = new Date().toLocaleDateString('en-GB');
+        localStorage.setItem('activeComplaint', JSON.stringify(complaint));
+    } else {
+        console.error("submitComplaintToDB is not available. Ensure db.js is loaded.");
+    }
+
     localStorage.removeItem('updateMode'); // Clear the update flag
     
     // Redirect to the confirmation page

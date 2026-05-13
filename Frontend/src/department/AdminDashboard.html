@@ -5,26 +5,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="style.css"> 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <script src="main.js"></script>
     <script src="/Backend/db.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
+
 <body>
     <header class="header">
         <div class="header-container">
             <div class="logo">
-                <a href="AdminDashboard.html"><img src="/Frontend/src/image/logo.png" alt="Logo" style="height:60px; width: auto;"></a>
+                <a href="AdminDashboard.html"><img src="/Frontend/src/image/logo.png" alt="Logo"
+                        style="height:60px; width: auto;"></a>
             </div>
 
             <nav class="nav-links">
-                <h1>Welcome Admin OfficerName</h1> 
+                <h1>Welcome Admin OfficerName</h1>
             </nav>
 
             <div class="profile-section">
                 <a href="#" class="login-btn"><i class="fas fa-bell" style="color: #fbff00; font-size: 250%;"></i></a>
-                <a href="#" class="login-btn"><i class="fas fa-user-circle" style="color: #ffffff; font-size: 250%;"></i></a>
+                <a href="#" class="login-btn"><i class="fas fa-user-circle"
+                        style="color: #ffffff; font-size: 250%;"></i></a>
             </div>
         </div>
     </header>
@@ -37,43 +41,44 @@
                 <div class="links">
                     <a href="AdminDashboard.html" class="active-link"><i class="fas fa-chart-line"></i> Dashboard</a>
                     <a href="NewComplaints.html"><i class="fas fa-plus-circle"></i> New Complaints</a>
-    
+
                     <a href="AssignedComplaints.html"><i class="fas fa-tasks"></i> Assigned Complaints</a>
                     <a href="PendingComplaints.html"><i class="fas fa-hourglass-half"></i> Pending Complaints</a>
                     <a href="ResolvedComplaints.html"><i class="fas fa-check-circle"></i> Resolved Complaints</a>
-                    <a href="EscalatedComplaints.html"><i class="fas fa-exclamation-triangle"></i> Escalated Complaints</a>
+                    <a href="EscalatedComplaints.html"><i class="fas fa-exclamation-triangle"></i> Escalated
+                        Complaints</a>
                     <a href="AnalyticsReports.html"><i class="fas fa-chart-bar"></i> Analytics / Reports</a>
                     <a href="/Frontend/src/index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
         </aside>
-        
+
         <div class="content">
             <h2>Admin Dashboard Overview</h2>
-            
+
             <section class="kpi-row">
                 <a href="TotalComplaints.html">
                     <div class="kpi-card">
                         <p>Total Complaints</p>
-                        <h1 style="color: #1a237e;">120</h1>
+                        <h1 id="kpi-total" style="color: #1a237e;">0</h1>
                     </div>
                 </a>
                 <a href="PendingComplaints.html">
                     <div class="kpi-card">
                         <p>Complaints in Progress</p>
-                        <h1 style="color:#ffc107;">45</h1>
+                        <h1 id="kpi-pending" style="color:#ffc107;">0</h1>
                     </div>
                 </a>
                 <a href="ResolvedComplaints.html">
                     <div class="kpi-card">
                         <p>Resolved Complaints</p>
-                        <h1 style="color: #28a745;">60</h1>
+                        <h1 id="kpi-resolved" style="color: #28a745;">0</h1>
                     </div>
                 </a>
                 <a href="EscalatedComplaints.html">
                     <div class="kpi-card">
                         <p>Escalated Complaints</p>
-                        <h1 style="color: #dc3545;">15</h1>
+                        <h1 id="kpi-escalated" style="color: #dc3545;">0</h1>
                     </div>
                 </a>
             </section>
@@ -106,41 +111,19 @@
                             <th>Assigned Officer</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>#12345</td>
-                            <td>Rajesh Kumar</td>
-                            <td>Electricity</td>
-                            <td>24-Sep-2025</td>
-                            <td style="color: orange; font-weight: bold;">Pending</td>
-                            <td>Officer A</td>
-                        </tr>
-                        <tr>
-                            <td>#12346</td>
-                            <td>Anita Sharma</td>
-                            <td>Road Issues</td>
-                            <td>25-Sep-2025</td>
-                            <td style="color: green; font-weight: bold;">In Progress</td>
-                            <td>Officer B</td>
-                        </tr>
-                        <tr>
-                            <td>#12347</td>
-                            <td>Sunil Gupta</td>
-                            <td>Corruption</td>
-                            <td>21-Sep-2025</td>
-                            <td style="color: red; font-weight: bold;">Escalated</td>
-                            <td>Officer C</td>
-                        </tr>
+                    <tbody id="complaintsTableBody">
                     </tbody>
                 </table>
             </section>
         </div>
     </div>
-    
+
     <footer class="footer">
         <div class="footer-container">
             <p>&copy; 2025 TDP Project All Rights Reserved</p>
         </div>
     </footer>
+    <script src="/Frontend/src/script/profile.js"></script>
 </body>
+
 </html>

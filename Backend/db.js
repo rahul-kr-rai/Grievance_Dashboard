@@ -4,7 +4,7 @@
 // 1. SIMULATED DATABASE DEFINITION & PERSISTENCE
 // ====================================================================
 
-const DB_STORAGE_KEY = 'complaintAdminDB';
+const DB_STORAGE_KEY = 'complaintAdminDB_v2';
 
 // Initial structure and default sample data
 let SimulatedDB = {
@@ -21,50 +21,7 @@ let SimulatedDB = {
 
 // --- Sample Data Initialization ---
 function initializeSampleData() {
-    SimulatedDB.allComplaints = [
-        // Complaint used in AdminDashboard.html and TotalComplaints.html
-        {
-            id: '#12345', citizenName: 'Rajesh Kumar', type: 'Electricity', message: 'Frequent power cuts.', 
-            attachmentName: 'None', attachmentPath: '#', dateSubmitted: '24-Sep-2025',
-            status: 'In Progress', expectedResponse: '14-Days', assignedOfficer: 'Officer A', dateAssigned: '25-Sep-2025', dateResolved: null, escalationLevel: 0
-        },
-        // Complaint used in AdminDashboard.html and AssignedComplaints.html
-        {
-            id: '#12346', citizenName: 'Anita Sharma', type: 'Road Issues', message: 'Pothole on main road.', 
-            attachmentName: 'road_pothole.mp4', attachmentPath: '#', dateSubmitted: '25-Sep-2025',
-            status: 'In Progress', expectedResponse: '14-Days', assignedOfficer: 'Officer B', dateAssigned: '25-Sep-2025', dateResolved: null, escalationLevel: 0
-        },
-        // Complaint used in AdminDashboard.html and EscalatedComplaints.html
-        {
-            id: '#12347', citizenName: 'Sunil Gupta', type: 'Gov.Scheme Benifit', message: 'Misconduct by official.', 
-            attachmentName: 'report.pdf', attachmentPath: '#', dateSubmitted: '21-Sep-2025',
-            status: 'In Progress', expectedResponse: '14-Days', assignedOfficer: 'Officer C', dateAssigned: '22-Sep-2025', dateResolved: null, escalationLevel: 2
-        },
-        // New Complaint for NewComplaints.html
-        {
-            id: '#12348', citizenName: 'Ravi Verma', type: 'Water Supply', message: 'Low pressure this week.', 
-            attachmentName: 'None', attachmentPath: '#', dateSubmitted: '17-Nov-2025',
-            status: 'New', expectedResponse: '14-Days', assignedOfficer: null, dateAssigned: null, dateResolved: null, escalationLevel: 0
-        },
-        // Assigned Complaint for AssignedComplaints.html
-        {
-            id: '#12349', citizenName: 'Preeti Singh', type: 'Road Damage', message: 'Broken pavement near school.', 
-            attachmentName: 'photo.jpg', attachmentPath: '#', dateSubmitted: '16-Nov-2025',
-            status: 'In Progress', expectedResponse: '14-Days', assignedOfficer: 'Officer B', dateAssigned: '17-Nov-2025', dateResolved: null, escalationLevel: 0
-        },
-        // Pending Complaint for PendingComplaints.html (stalled)
-        {
-            id: '#12351', citizenName: 'Karanjeet Kaur', type: 'Roads', message: 'Illegal construction on public land.', 
-            attachmentName: 'None', attachmentPath: '#', dateSubmitted: '05-Nov-2025',
-            status: 'In Progress', expectedResponse: '14-Days', assignedOfficer: 'Officer B', dateAssigned: '06-Nov-2025', dateResolved: null, escalationLevel: 0
-        },
-        // Resolved Complaint for ResolvedComplaints.html
-        {
-            id: '#12355', citizenName: 'Priya Das', type: 'Water Supply', message: 'Leakage fixed.', 
-            attachmentName: 'None', attachmentPath: '#', dateSubmitted: '15-Sep-2025',
-            status: 'Resolved', expectedResponse: '5 Days', assignedOfficer: 'Officer A', dateAssigned: '15-Sep-2025', dateResolved: '20-Sep-2025', escalationLevel: 0
-        },
-    ];
+    SimulatedDB.allComplaints = [];
 }
 
 

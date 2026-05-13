@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Mukhiya Login</title>
+  <link rel="stylesheet" href="/Frontend/src/css/style.css">
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .form {
+      display: none;
+    }
+    .form.active {
+      display: block;
+    }
+    .toggle {
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="login form active">
+      <header>Mukhiya Login</header>
+      <form action="#">
+        <input type="email" placeholder="Enter your email" required>
+        <input type="password" placeholder="Enter your password" required>
+        <a href="#">Forgot password?</a>
+        <input type="button" class="button" value="Login" onclick="redirectToPage()">
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function redirectToPage() {
+      window.location.href = "MukhiyaDashboard.html";
+    }
+  </script>
+</body>
+</html>

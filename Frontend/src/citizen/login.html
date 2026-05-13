@@ -31,11 +31,11 @@
   <div class="container">
     <div class="login form active">
       <header>Login</header>
-      <form action="#">
-        <input type="email" placeholder="Enter your email" required>
-        <input type="password" placeholder="Enter your password" required>
+      <form action="#" id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+        <input type="password" id="loginPass" placeholder="Enter your password" required>
         <a href="#">Forgot password?</a>
-        <input type="button" class="button" value="Login" onclick="redirectToPage()">
+        <input type="button" class="button" value="Login" onclick="loginCitizen()">
       </form>
       <div class="signup">
         <span>Don't have an account? 
@@ -45,12 +45,13 @@
     </div>
     <div class="registration form">
       <header>Register</header>
-      <form action="#">
-        <input type="text" placeholder="Enter your full name" required>
-        <input type="email" placeholder="Enter your email" required>
-        <input type="password" placeholder="Create a password" required>
-        <input type="password" placeholder="Confirm your password" required>
-        <input type="button" class="button" value="Register" onclick="redirectToPage()">
+      <form action="#" id="registerForm">
+        <input type="text" id="regName" placeholder="Enter your full name" required>
+        <input type="text" id="regPhone" placeholder="Enter your phone number" required>
+        <input type="email" id="regEmail" placeholder="Enter your email" required>
+        <input type="password" id="regPass" placeholder="Create a password" required>
+        <input type="password" id="regConfirmPass" placeholder="Confirm your password" required>
+        <input type="button" class="button" value="Register" onclick="registerCitizen()">
       </form>
       <div class="signup">
         <span>Already have an account? 
@@ -61,8 +62,46 @@
   </div>
 
   <script>
-    function redirectToPage() {
-      window.location.href = "Dashbord.html"; // Replace with the URL you want to redirect to
+    function registerCitizen() {
+      const name = document.getElementById('regName').value;
+      const phone = document.getElementById('regPhone').value;
+      const email = document.getElementById('regEmail').value;
+      if (!name || !email) return alert('Please enter your name and email');
+      
+      localStorage.setItem('loggedInCitizenName', name);
+      localStorage.setItem('loggedInCitizenEmail', email);
+      localStorage.setItem('loggedInCitizenPhone', phone);
+      localStorage.setItem('citizenName', name); // Used by chat system
+      
+      // Clear old user data
+      localStorage.removeItem('activeComplaint');
+      localStorage.removeItem('complaintHistory');
+      
+      window.location.href = "Dashbord.html"; 
+    }
+
+    function loginCitizen() {
+      const email = document.getElementById('loginEmail').value;
+      if (!email) return alert('Please enter your email');
+      
+      const savedEmail = localStorage.getItem('loggedInCitizenEmail');
+      let resolvedName;
+      if (email === savedEmail) {
+          resolvedName = localStorage.getItem('loggedInCitizenName') || email.split('@')[0];
+      } else {
+          resolvedName = email.split('@')[0];
+          localStorage.setItem('loggedInCitizenName', resolvedName);
+          localStorage.setItem('loggedInCitizenEmail', email);
+          localStorage.setItem('loggedInCitizenPhone', 'N/A');
+      }
+      
+      localStorage.setItem('citizenName', resolvedName); // Used by chat system
+      
+      // Clear old user data to prevent cross-user leakage
+      localStorage.removeItem('activeComplaint');
+      localStorage.removeItem('complaintHistory');
+      
+      window.location.href = "Dashbord.html"; 
     }
 
     function toggleForms(formToShow) {

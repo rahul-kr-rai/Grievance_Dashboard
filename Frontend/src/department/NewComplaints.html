@@ -5,25 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - New Complaints</title>
-    <link rel="stylesheet" href="style.css"> 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <script src="main.js"></script>
     <script src="/Backend/db.js"></script>
 </head>
+
 <body>
     <header class="header">
         <div class="header-container">
             <div class="logo">
-                <a href="AdminDashboard.html"><img src="/Frontend/src/image/logo.png" alt="Logo" style="height:60px; width: auto;"></a>
+                <a href="AdminDashboard.html"><img src="/Frontend/src/image/logo.png" alt="Logo"
+                        style="height:60px; width: auto;"></a>
             </div>
 
             <nav class="nav-links">
-                <h1>Welcome Admin OfficerName</h1> 
+                <h1>Welcome Admin OfficerName</h1>
             </nav>
 
             <div class="profile-section">
                 <a href="#" class="login-btn"><i class="fas fa-bell" style="color: #fbff00; font-size: 250%;"></i></a>
-                <a href="#" class="login-btn"><i class="fas fa-user-circle" style="color: #ffffff; font-size: 250%;"></i></a>
+                <a href="#" class="login-btn"><i class="fas fa-user-circle"
+                        style="color: #ffffff; font-size: 250%;"></i></a>
             </div>
         </div>
     </header>
@@ -35,21 +39,23 @@
                 <br>
                 <div class="links">
                     <a href="AdminDashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
-                    <a href="NewComplaints.html" class="active-link"><i class="fas fa-plus-circle"></i> New Complaints</a>
-    
+                    <a href="NewComplaints.html" class="active-link"><i class="fas fa-plus-circle"></i> New
+                        Complaints</a>
+
                     <a href="AssignedComplaints.html"><i class="fas fa-tasks"></i> Assigned Complaints</a>
                     <a href="PendingComplaints.html"><i class="fas fa-hourglass-half"></i> Pending Complaints</a>
                     <a href="ResolvedComplaints.html"><i class="fas fa-check-circle"></i> Resolved Complaints</a>
-                    <a href="EscalatedComplaints.html"><i class="fas fa-exclamation-triangle"></i> Escalated Complaints</a>
+                    <a href="EscalatedComplaints.html"><i class="fas fa-exclamation-triangle"></i> Escalated
+                        Complaints</a>
                     <a href="AnalyticsReports.html"><i class="fas fa-chart-bar"></i> Analytics / Reports</a>
                     <a href="/Frontend/src/index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
         </aside>
-        
+
         <div class="content">
             <h2><i class="fas fa-inbox"></i> New & Unassigned Complaints</h2>
-            
+
             <div class="filter-actions-row">
                 <div class="search-filter">
                     <input type="text" placeholder="Search by ID or Citizen Name..." class="search-input">
@@ -62,7 +68,7 @@
                 </div>
                 <button class="assign-button"><i class="fas fa-hand-holding"></i> Assign Selected</button>
             </div>
-            
+
             <section class="table-row">
                 <table>
                     <thead>
@@ -73,7 +79,8 @@
                             <th>Category</th>
                             <th>Date Submitted</th>
                             <th>Status</th>
-                            <th>Action</th> </tr>
+                            <th>Action</th>
+                        </tr>
                     </thead>
                     <tbody>
                         <tr>
@@ -83,7 +90,7 @@
                             <td>Water Supply</td>
                             <td>17-Nov-2025</td>
                             <td class="status-new">New</td>
-                            <td><button class="action-btn-view">View/Assign</button></td> 
+                            <td><button class="action-btn-view">View/Assign</button></td>
                         </tr>
                         <tr>
                             <td><input type="checkbox"></td>
@@ -108,11 +115,13 @@
             </section>
         </div>
     </div>
-    
+
     <footer class="footer">
         <div class="footer-container">
             <p>&copy; 2025 TDP Project All Rights Reserved</p>
         </div>
     </footer>
+    <script src="/Frontend/src/script/profile.js"></script>
 </body>
+
 </html>

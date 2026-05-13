@@ -18,17 +18,21 @@ body {
 /* --- HEADER AND LAYOUT STYLES --- */
 
 .header {
-    background-color: #00009c;
-    padding: 10px 20px;
+    background-color: #1a237e;
+    /* Match department navy blue */
+    padding: 0 20px;
     width: 100%;
+    height: 80px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
+    height: 100%;
 }
 
 .logo img {
@@ -36,7 +40,7 @@ body {
     height: auto;
     border-radius: 4px;
     /* Define common logo size here if needed */
-    height: 60px; 
+    height: 60px;
     width: auto;
 }
 
@@ -45,9 +49,26 @@ body {
     gap: 30px;
 }
 
+.nav-links a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 21px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    background-color: #ff5500;
+    color: #ffffff;
+}
+
+
 .profile-section {
     display: flex;
     gap: 100px;
+    align-items: center;
 }
 
 h1 {
@@ -63,7 +84,8 @@ h1 {
     /* Removed fixed height from .main-content to allow content to dictate height */
 }
 
-.content, .sidebar {
+.content,
+.sidebar {
     padding: 20px;
 }
 
@@ -111,9 +133,9 @@ h1 {
 
 /* ACTIVE LINK STYLING (Used across all dashboards) */
 .sidebar .links a.active-link {
-    background-color: #f0f0f0; 
-    color: #00009c !important; 
-    border-left: 15px solid #00009c; 
+    background-color: #f0f0f0;
+    color: #00009c !important;
+    border-left: 15px solid #00009c;
     padding-left: 15px;
 }
 
@@ -128,13 +150,16 @@ h1 {
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-.complaint-form input[type="file"]{
+
+.complaint-form input[type="file"] {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.select-complain :hover, .Issue :hover, .file :hover {
+.select-complain :hover,
+.Issue :hover,
+.file :hover {
     background-color: #e7e7e7;
 }
 
@@ -192,7 +217,8 @@ button[type="submit"]:hover {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 20px auto; /* Centering the element */
+    margin: 20px auto;
+    /* Centering the element */
 }
 
 /* Track complain status buttons */
@@ -208,8 +234,9 @@ button[type="submit"]:hover {
     margin-top: 10px;
     margin-right: 10px;
 }
+
 .Cbtn {
-    padding: 10px 30px; 
+    padding: 10px 30px;
     background-color: red;
     color: #fff;
     border-radius: 5px;
@@ -218,7 +245,9 @@ button[type="submit"]:hover {
     margin-top: 10px;
     /* Adjusting margins to align with Ubtn */
 }
-.Ubtn:hover, .Cbtn:hover {
+
+.Ubtn:hover,
+.Cbtn:hover {
     background-color: #00009c;
 }
 
@@ -239,6 +268,7 @@ button[type="submit"]:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
 }
+
 .scheme-title:hover {
     color: #0718d3;
 }
@@ -252,7 +282,7 @@ button[type="submit"]:hover {
 
 /* List alignment */
 .scheme-details ul {
-    padding-left: 20px; 
+    padding-left: 20px;
     margin-top: 5px;
     margin-bottom: 10px;
 }
@@ -280,7 +310,7 @@ button[type="submit"]:hover {
 }
 
 .modal {
-    display: none; /* Keep this to ensure it's hidden by default if not set by JS */
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -290,12 +320,14 @@ button[type="submit"]:hover {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     width: 90%;
     max-width: 550px;
-    height: auto;
+    height: 650px;
+    /* Fixed height to support internal flex scrolling */
     max-height: 90vh;
     z-index: 1001;
     padding: 0;
     overflow: hidden;
-    /* REMOVE display: flex; and flex-direction: column; from here */
+    flex-direction: column;
+    /* Ensure flex behavior */
 }
 
 
@@ -306,6 +338,8 @@ button[type="submit"]:hover {
     font-size: 1.2em;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
+    flex-shrink: 0;
+    /* Keep header size fixed */
 }
 
 .modal-header h3 {
@@ -314,14 +348,21 @@ button[type="submit"]:hover {
 
 .modal-content {
     padding: 20px;
-    flex-grow: 1;
-    overflow-y: auto; /* Scrollable content if necessary */
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    scroll-behavior: smooth;
 }
+
 
 /* --- Close Button --- */
 .close-btn {
-    background: #fff; /* Make it subtle */
-    color: red; /* White icon on blue header */
+    background: #fff;
+    /* Make it subtle */
+    color: red;
+    /* White icon on blue header */
     width: 30px;
     height: 29px;
     border: none;
@@ -332,11 +373,13 @@ button[type="submit"]:hover {
     top: 10px;
     right: 10px;
     transition: color 0.2s;
-    line-height: 1; /* Center the 'X' icon */
+    line-height: 1;
+    /* Center the 'X' icon */
 }
 
 .close-btn:hover {
-    color: #00009c; /* Light red hover */
+    color: #00009c;
+    /* Light red hover */
 }
 
 /* --- WhatsApp and Call Links (New/Improved) --- */
@@ -344,11 +387,15 @@ button[type="submit"]:hover {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    /* Prevents button row from being squashed */
 }
 
+
 #connect-options a {
-    flex-grow: 1; /* Makes links expand to fill space */
+    flex-grow: 1;
+    /* Makes links expand to fill space */
     text-align: center;
     padding: 12px 15px;
     border-radius: 8px;
@@ -363,71 +410,194 @@ button[type="submit"]:hover {
 #connect-options a i {
     margin-right: 8px;
     font-size: 1.2em;
- 
+
 }
 
 /* WhatsApp Link Styling */
 #whatsapp-link {
-    background: #14d55b; /* WhatsApp Green */
+    background: #14d55b;
+    /* WhatsApp Green */
     color: #fff;
     box-shadow: 0 2px 5px rgba(37, 211, 102, 0.4);
 }
 
 #whatsapp-link:hover {
-    background: #128c1e; /* Darker green on hover */
+    background: #128c1e;
+    /* Darker green on hover */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Call Link Styling */
 #phone-link {
-    background: #007bff; /* Standard Blue */
+    background: #007bff;
+    /* Standard Blue */
     color: #fff;
     box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);
 }
 
 #phone-link:hover {
-    background: #0056b3; /* Darker blue on hover */
+    background: #0056b3;
+    /* Darker blue on hover */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Custom Premium Scrollbar for Chat, Options and Modal Content --- */
+.chat-messages::-webkit-scrollbar,
+.button-group::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track,
+.button-group::-webkit-scrollbar-track,
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+.button-group::-webkit-scrollbar-thumb,
+.modal-content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover,
+.button-group::-webkit-scrollbar-thumb:hover,
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #00009c;
+}
+
+
+/* --- Close Button --- */
+.close-btn {
+    background: #fff;
+    color: red;
+    width: 30px;
+    height: 29px;
+    border: none;
+    border-radius: 7px;
+    font-size: 1.5em;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transition: color 0.2s;
+    line-height: 1;
+    z-index: 10;
+}
+
+.close-btn:hover {
+    color: #00009c;
+}
+
+/* --- WhatsApp and Call Links --- */
+#connect-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+#connect-options a {
+    flex-grow: 1;
+    text-align: center;
+    padding: 12px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+#connect-options a i {
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+#whatsapp-link {
+    background: #14d55b;
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(37, 211, 102, 0.4);
+}
+
+#whatsapp-link:hover {
+    background: #128c1e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#phone-link {
+    background: #007bff;
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);
+}
+
+#phone-link:hover {
+    background: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+/* --- Representative Button Group (Connect Options Box) --- */
+.button-group {
+    display: flex;
+    flex-wrap: nowrap;
+    /* Change to nowrap for horizontal scrolling if desired, or keep as is */
+    overflow-x: auto;
+    /* Allow horizontal scroll for buttons if many */
+    gap: 12px;
+    padding-bottom: 5px;
 }
 
 /* --- Chat Box and Messages --- */
 .chat-box {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    background: #f8f9fa; /* Lighter background for the entire box */
+    background: #f8f9fa;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    flex-grow: 1; /* Allow chat box to fill remaining vertical space */
-    min-height: 300px; /* Ensure a minimum visible chat area */
+    flex-grow: 1;
+    min-height: 300px;
 }
 
 .chat-messages {
-    flex-grow: 1; /* Messages area takes up most of the space */
+    flex-grow: 1;
     overflow-y: auto;
     background: #fff;
-    padding: 10px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
+    scroll-behavior: smooth;
 }
+
+
 
 .chat-message {
     margin: 4px 0;
     padding: 8px 12px;
-    border-radius: 18px; /* More modern, pill-shaped bubbles */
-    max-width: 85%; /* Slightly more width for long messages */
+    border-radius: 18px;
+    /* More modern, pill-shaped bubbles */
+    max-width: 85%;
+    /* Slightly more width for long messages */
     line-height: 1.4;
     position: relative;
-    word-wrap: break-word; /* Ensure text wraps */
+    word-wrap: break-word;
+    /* Ensure text wraps */
 }
 
 .chat-message.user {
-    background: #e1ffc7; /* Light pastel green/blue for user */
+    background: #e1ffc7;
+    /* Light pastel green/blue for user */
     align-self: flex-end;
 }
 
 .chat-message.entity {
-    background: #f1f0f0; /* Soft gray for entity/other party */
+    background: #f1f0f0;
+    /* Soft gray for entity/other party */
     align-self: flex-start;
 }
 
@@ -440,12 +610,43 @@ button[type="submit"]:hover {
     margin: 0;
 }
 
+/* --- Common Questions Chatbot --- */
+.common-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 10px 0;
+    align-self: flex-start;
+}
+
+.question-btn {
+    background: #fff;
+    border: 1px solid #00009c;
+    color: #00009c;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-align: left;
+    transition: all 0.3s ease;
+    width: fit-content;
+    max-width: 90%;
+}
+
+.question-btn:hover {
+    background: #00009c;
+    color: #fff;
+    transform: translateX(5px);
+}
+
 /* --- Ticks Styling --- */
 .ticks {
-    font-size: 0.7em; /* Smaller font size */
+    font-size: 0.7em;
+    /* Smaller font size */
     margin-left: 5px;
     color: gray;
-    position: absolute; /* Position relative to the chat-message */
+    position: absolute;
+    /* Position relative to the chat-message */
     bottom: 2px;
     right: 8px;
 }
@@ -465,7 +666,8 @@ button[type="submit"]:hover {
 .chat-input {
     display: flex;
     padding: 10px;
-    background: #f1f0f0; /* Background color for the input bar */
+    background: #f1f0f0;
+    /* Background color for the input bar */
     border-top: 1px solid #e0e0e0;
     align-items: center;
 }
@@ -474,7 +676,8 @@ button[type="submit"]:hover {
     flex: 1;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 20px; /* Pill-shaped input field */
+    border-radius: 20px;
+    /* Pill-shaped input field */
     margin-right: 5px;
     outline: none;
     transition: border-color 0.2s;
@@ -501,7 +704,8 @@ button[type="submit"]:hover {
 
 .attach-btn {
     cursor: pointer;
-    font-size: 1.5em; /* Larger icon */
+    font-size: 1.5em;
+    /* Larger icon */
     color: #555;
     display: flex;
     align-items: center;
@@ -525,8 +729,10 @@ button[type="submit"]:hover {
     width: 100%;
     margin-top: auto;
 }
+
 .footer-container {
-    padding: 0; /* Already handled by .footer */
+    padding: 0;
+    /* Already handled by .footer */
 }
 
 /* --- RESPONSIVENESS (Media Query Consolidation) --- */
@@ -535,7 +741,8 @@ button[type="submit"]:hover {
     .complaint-form {
         width: 95%;
         padding: 15px;
-        margin: 5% 2.5%; /* Center form on small screens */
+        margin: 5% 2.5%;
+        /* Center form on small screens */
     }
 
     .form {
@@ -563,12 +770,14 @@ button[type="submit"]:hover {
         flex-direction: column;
     }
 
-    .content, .sidebar {
+    .content,
+    .sidebar {
         width: 100%;
     }
-    
+
     /* Center Track Status Buttons on Mobile */
-    .content a.Cbtn, .content a.Ubtn {
+    .content a.Cbtn,
+    .content a.Ubtn {
         margin: 10px 5px;
         display: block;
         width: 90%;
@@ -605,13 +814,15 @@ button[type="submit"]:hover {
 
 .view-history-btn {
     padding: 6px 10px;
-    background-color: #119238; /* Green for view button */
+    background-color: #119238;
+    /* Green for view button */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
 }
+
 .view-history-btn:hover {
     background-color: #0e7a2e;
 }
@@ -653,11 +864,11 @@ body {
     display: none;
 }
 
-#check:checked ~ .registration {
+#check:checked~.registration {
     display: block;
 }
 
-#check:checked ~ .login {
+#check:checked~.login {
     display: none;
 }
 
@@ -718,126 +929,13 @@ body {
     color: #1100ff;
 }
 
-.signup {
-    font-size: 17px;
-    text-align: center;
-}
-
-.signup label {
-    color: #009579;
-    cursor: pointer;
-}
-
-.signup label:hover {
-    text-decoration: underline;
-}
-
-/*---------------------Nav Bar---------------------------------------------------*/
-
-.header {
-    background-color: #00009c;
-    padding: 10px 20px;
-    width: 100%;
-}
-
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto; /* Center the header on the page */
-}
-
-
-
-/* Navigation Links */
-.nav-links {
-    display: flex;
-    gap: 30px; /* Space between the menu items */
-}
-
-.nav-links a {
-    color: rgba(88, 88, 88, 0.836);
-    text-decoration: none;
-    padding: 10px 15px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 21px;
-}
-
-.nav-links a:hover {
-    background-color: #ff5500;
-    transition: background-color 0.3s;
-    color: #ffffff;
-    font-weight: bold;
-}
-
-/* Profile Section with Login/Signup Buttons */
-.profile-section {
-    display:flex;
-    gap: 100px; /* Space between login and signup buttons */
-
-}
-.fas fa-bell :hover{
-  color: #000;
-}
-
-
-
-.links a {
-    display: block; /* Ensure each link is on a new line */
-    text-decoration: none;
-    color: #fff;
-    background-color: #119238;
-    padding: 15px 20px;
-    border-radius: 5px;
-    margin-bottom: 15px; /* Add some space between links */
-    line-height: normal;
-
-}
-.links a:hover {
-    background-color: #00009c;
-    color: #ffffff;
-}
-#home {
-    background-color: #ff0000;
-    color: #ffffff;
-}
-#home:hover{
-  background-color: #00009c;
-  color: #ffffff;
-}
-.main-content {
-  display: flex;
-  height: 80vh;
-}
-.content, .sidebar {
-  padding: 20px;
-}
-
-.sidebar {
-  width: 20%;
-  background-color: #d4d4d4;
-  height: 80vh;
-}
-h1 {
-  color: #fff;
-  text-align: center;
-}
-.footer-container{
-  background-color: #870000;
-  color: #ffffff;
-  text-align: center;
-  padding: 15px;
-}
-
-
+/* --- Direct Connect representative section --- */
 .conect {
     display: flex;
-    flex-direction: column;   /* stack label above button group */
-    align-items: left;      /* center everything horizontally */
-    margin: 50px 0;           /* spacing between Rural and Urban sections */
-    gap: 12px;                /* spacing between label and buttons */
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 50px 0;
+    gap: 12px;
 }
 
 .conect p2 {
@@ -845,13 +943,6 @@ h1 {
     font-weight: 600;
     color: #333;
     margin: 0;
-}
-
-.button-group {
-    display: flex;
-    flex-wrap: wrap;          /* allows buttons to wrap to next line if needed */
-    justify-content: left;
-    gap: 12px;                /* spacing between buttons */
 }
 
 .connect-btn {
@@ -870,20 +961,19 @@ h1 {
     transform: translateY(-2px);
 }
 
+.fa-user-circle {
+    transition: transform 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+.fa-user-circle:hover {
+    transform: scale(1.1);
+    color: #ffd700 !important;
+}
+
 
 /* Responsive Design for Smaller Screens */
 @media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .nav-links {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-
     .profile-section {
         flex-direction: column;
         margin-top: 10px;
@@ -891,3 +981,149 @@ h1 {
     }
 }
 
+/* --- Profile Card Styles --- */
+.profile-card {
+    position: fixed;
+    top: 90px;
+    right: 30px;
+    width: 320px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    display: none;
+    z-index: 2000;
+    overflow: hidden;
+    animation: profileSlideIn 0.3s ease-out;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+@keyframes profileSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.profile-card-header {
+    background: #00009c;
+    color: #fff;
+    padding: 25px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    background: #fff;
+    object-fit: contain;
+    padding: 5px;
+}
+
+.profile-info h3 {
+    margin: 0;
+    font-size: 1.25em;
+    font-weight: 600;
+    color: #fff;
+}
+
+.profile-info p {
+    margin: 0;
+    font-size: 0.9em;
+    opacity: 0.9;
+    color: #fff;
+}
+
+.profile-card-body {
+    padding: 20px;
+}
+
+.profile-detail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    color: #444;
+    font-size: 0.95em;
+}
+
+.profile-detail i {
+    color: #00009c;
+    width: 20px;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+    margin: 20px 0;
+}
+
+.stat-item {
+    text-align: center;
+    flex: 1;
+}
+
+.stat-value {
+    display: block;
+    font-weight: 700;
+    color: #00009c;
+    font-size: 1.3em;
+}
+
+.stat-label {
+    font-size: 0.85em;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-btn {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #f0f0f0;
+    background: #fafafa;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #333;
+}
+
+.profile-btn:hover {
+    background: #00009c;
+    color: #fff;
+    transform: translateX(5px);
+    border-color: #00009c;
+}
+
+.profile-btn:hover i {
+    color: #fff;
+}
+
+.profile-btn.logout-btn:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+}
