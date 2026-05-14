@@ -12,10 +12,8 @@ function initDirectConnect() {
     const chatAttachment = document.getElementById('chat-attachment');
 
     let currentEntity = "";
-    const citizenName = localStorage.getItem('citizenName') 
-        || localStorage.getItem('loggedInCitizenName') 
-        || (localStorage.getItem('loggedInCitizenEmail') || '').split('@')[0] 
-        || 'Citizen';
+    const session = typeof getLoggedInUser === 'function' ? getLoggedInUser() : window.__authUser;
+    const citizenName = session && session.name ? session.name : 'Citizen';
     let currentStoredMessageCount = 0;
     let chatPollInterval = null;
 
@@ -136,12 +134,16 @@ function initDirectConnect() {
         });
     });
 
-    function loadChatHistory() {
+    function getChannel() {
+        return currentEntity === 'Mukhiya' ? 'mukhiya' : currentEntity;
+    }
+
+    async function loadChatHistory() {
         chatMessages.innerHTML = '';
 
-        let storageKey = currentEntity === 'Mukhiya' ? 'mukhiyaChats' : 'directChats_' + currentEntity;
-        let chats = JSON.parse(localStorage.getItem(storageKey) || '{}');
-        let messages = chats[citizenName] || [];
+        let messages = typeof getMessages === 'function'
+            ? await getMessages(getChannel(), citizenName)
+            : [];
 
         currentStoredMessageCount = messages.length;
 
@@ -156,12 +158,12 @@ function initDirectConnect() {
         setTimeout(showQuestions, 500);
     }
 
-    function pollForNewMessages() {
+    async function pollForNewMessages() {
         if (modal.style.display !== 'flex' || !currentEntity) return;
 
-        let storageKey = currentEntity === 'Mukhiya' ? 'mukhiyaChats' : 'directChats_' + currentEntity;
-        let chats = JSON.parse(localStorage.getItem(storageKey) || '{}');
-        let messages = chats[citizenName] || [];
+        let messages = typeof getMessages === 'function'
+            ? await getMessages(getChannel(), citizenName)
+            : [];
 
         if (messages.length > currentStoredMessageCount) {
             // Append only the new messages
@@ -227,27 +229,19 @@ function initDirectConnect() {
         return msg; // return message element for later tick update
     }
 
-    function sendMessage() {
+    async function sendChatMessage() {
         const text = chatInputField.value.trim();
         if (text) {
             const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const msgElement = addMessage(text, 'user', true, timeStr);
             chatInputField.value = '';
 
-            // Save to real chat
-            let storageKey = currentEntity === 'Mukhiya' ? 'mukhiyaChats' : 'directChats_' + currentEntity;
-            let chats = JSON.parse(localStorage.getItem(storageKey) || '{}');
-            if (!chats[citizenName]) chats[citizenName] = [];
+            const saved = typeof window.sendMessage === 'function'
+                ? await window.sendMessage(getChannel(), citizenName, citizenName, text)
+                : null;
+            if (saved) currentStoredMessageCount++;
 
-            chats[citizenName].push({
-                sender: citizenName,
-                text: text,
-                time: timeStr
-            });
-            localStorage.setItem(storageKey, JSON.stringify(chats));
-            currentStoredMessageCount = chats[citizenName].length; // Update local count so we don't duplicate
-
-            setTimeout(() => {
+            setTimeout(async () => {
                 // Update ticks to double ✓✓ indicating it was sent to db
                 const ticks = msgElement.querySelector('.ticks');
                 if (ticks) ticks.textContent = '✓✓';
@@ -255,15 +249,9 @@ function initDirectConnect() {
                 // Optional generic reply if not Mukhiya (Mukhiya has real dashboard)
                 if (currentEntity !== 'Mukhiya') {
                     const replyText = `Thank you for reaching out. The ${currentEntity} office has received your message.`;
-                    const replyTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                    chats = JSON.parse(localStorage.getItem(storageKey) || '{}');
-                    chats[citizenName].push({
-                        sender: currentEntity,
-                        text: replyText,
-                        time: replyTime
-                    });
-                    localStorage.setItem(storageKey, JSON.stringify(chats));
+                    if (typeof window.sendMessage === 'function') {
+                        await window.sendMessage(getChannel(), citizenName, currentEntity, replyText);
+                    }
 
                     // We don't render it manually here, the poller will pick it up, 
                     // but we can call pollForNewMessages immediately
@@ -276,13 +264,13 @@ function initDirectConnect() {
         }
     }
 
-    chatSendBtn.addEventListener('click', sendMessage);
+    chatSendBtn.addEventListener('click', sendChatMessage);
 
     // Enter key to send
     chatInputField.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            sendMessage();
+            sendChatMessage();
         }
     });
 

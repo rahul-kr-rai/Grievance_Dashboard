@@ -1,62 +1,84 @@
-function initProfileCard() {
-    const userIcon = document.querySelector('.fas.fa-user-circle').parentElement;
+// Local cache for complaints
+let complaintCache = [];
+
+async function loadComplaintStats() {
+    try {
+        const allComplaints = await fetch(`${window.location.origin}/api/complaints`)
+            .then(r => r.json())
+            .then(data => data.complaints || []);
+        complaintCache = allComplaints;
+        return allComplaints;
+    } catch (error) {
+        console.error('Error loading complaints:', error);
+        return complaintCache;
+    }
+}
+
+async function initProfileCard() {
+    const userIcon = document.querySelector('.fas.fa-user-circle');
+    if (!userIcon) return;
+    const userIconParent = userIcon.parentElement;
 
     if (!document.getElementById('profile-card')) {
+        // Load complaints from API
+        const allComplaints = await loadComplaintStats();
+
         const isDepartment = window.location.pathname.includes('/department/');
-        const isMukhiya = window.location.pathname.includes('/mukhiya/');
-        
+        const isMukhiya   = window.location.pathname.includes('/mukhiya/');
+
         const profileCard = document.createElement('div');
         profileCard.id = 'profile-card';
         profileCard.className = 'profile-card';
 
-        const citizenName = localStorage.getItem('loggedInCitizenName') || 'Rahul Kumar';
-        const citizenEmail = localStorage.getItem('loggedInCitizenEmail') || 'rahul.kumar@email.com';
-        const citizenPhone = localStorage.getItem('loggedInCitizenPhone') || '+91 9876543210';
+        const session = typeof getLoggedInUser === 'function' ? getLoggedInUser() : window.__authUser;
+        const sessionName  = session && session.name ? session.name : '';
+        const sessionEmail = session && session.email ? session.email : '';
+        const sessionPhone = session && session.phone ? session.phone : '';
 
-        // Calculate dynamic stats
-        let totalComplaints = "0";
-        if (!isDepartment && !isMukhiya && typeof SimulatedDB !== 'undefined' && SimulatedDB.allComplaints) {
-            const userComplaints = SimulatedDB.allComplaints.filter(c => c.citizenName === citizenName);
-            totalComplaints = userComplaints.length.toString();
-        }
+        // Dynamic complaint counts from live ComplaintDB
+        const totalAll       = allComplaints.length;
+        const totalResolved  = allComplaints.filter(c => c.status === 'Resolved' || c.status === 'Closed').length;
+        const totalNew       = allComplaints.filter(c => c.status === 'New').length;
+        const userComplaints = allComplaints.filter(c => c.citizenName === sessionName);
+        const userResolved   = userComplaints.filter(c => c.status === 'Resolved' || c.status === 'Closed').length;
 
         let userData;
         if (isMukhiya) {
             userData = {
-                name: "Mukhiya Ji",
-                role: "Panchayat Head",
-                email: "mukhiya@panchayat.gov.in",
-                phone: "+91 9988776655",
-                img: "/Frontend/src/image/Department.png", // Reusing department icon or specify another
-                stat1: { val: "85", label: "Total Cases" },
-                stat2: { val: "4.7", label: "Approval" }
+                name:  sessionName  || 'Mukhiya',
+                role:  'Panchayat Head',
+                email: sessionEmail || 'mukhiya@panchayat.gov.in',
+                phone: sessionPhone || '',
+                img:   '/Frontend/src/image/Department.png',
+                stat1: { val: totalAll,      label: 'Total Cases' },
+                stat2: { val: totalResolved, label: 'Resolved' }
             };
         } else if (isDepartment) {
             userData = {
-                name: "Officer Rajesh",
-                role: "Department Admin",
-                email: "rajesh.admin@grievance.gov.in",
-                phone: "+91 8877665544",
-                img: "/Frontend/src/image/Department.png",
-                stat1: { val: "60", label: "Resolved" },
-                stat2: { val: "4.5", label: "KPI Score" }
+                name:  sessionName  || 'Admin',
+                role:  'Department Admin',
+                email: sessionEmail || 'admin@grievance.gov.in',
+                phone: sessionPhone || '',
+                img:   '/Frontend/src/image/Department.png',
+                stat1: { val: totalResolved, label: 'Resolved' },
+                stat2: { val: totalNew,      label: 'Pending' }
             };
         } else {
             userData = {
-                name: citizenName,
-                role: "Citizen",
-                email: citizenEmail,
-                phone: citizenPhone,
-                img: "/Frontend/src/image/Citizen.png",
-                stat1: { val: totalComplaints, label: "Complaints" },
-                stat2: { val: "4.8", label: "Rating" }
+                name:  sessionName  || 'Citizen',
+                role:  'Citizen',
+                email: sessionEmail || '',
+                phone: sessionPhone || '',
+                img:   '/Frontend/src/image/Citizen.png',
+                stat1: { val: userComplaints.length, label: 'Complaints' },
+                stat2: { val: userResolved,          label: 'Resolved' }
             };
         }
 
-        // Update the Navbar welcome text
+        // Update the Navbar welcome text dynamically
         const navTitle = document.querySelector('.nav-links h1');
-        if (navTitle && !isDepartment && !isMukhiya) {
-            navTitle.innerText = 'Welcome ' + citizenName;
+        if (navTitle && userData.name) {
+            navTitle.innerText = 'Welcome ' + userData.name;
         }
 
         profileCard.innerHTML = `
@@ -70,11 +92,11 @@ function initProfileCard() {
             <div class="profile-card-body">
                 <div class="profile-detail">
                     <i class="fas fa-envelope"></i>
-                    <span>${userData.email}</span>
+                    <span>${userData.email || '<em style="color:#aaa;">Not set</em>'}</span>
                 </div>
                 <div class="profile-detail">
                     <i class="fas fa-phone"></i>
-                    <span>${userData.phone}</span>
+                    <span>${userData.phone || '<em style="color:#aaa;">Not set</em>'}</span>
                 </div>
                 <div class="profile-stats">
                     <div class="stat-item">
@@ -95,13 +117,19 @@ function initProfileCard() {
         `;
         document.body.appendChild(profileCard);
 
-        // Add Logout Logic
-        profileCard.querySelector('.logout-btn').addEventListener('click', () => {
-            window.location.href = '/Frontend/src/index.html';
+        // Logout: clear session keys and redirect to home
+        profileCard.querySelector('.logout-btn').addEventListener('click', async () => {
+            try {
+                logoutUser();
+                window.location.href = '/Frontend/src/index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '/Frontend/src/index.html';
+            }
         });
 
-        // Toggle Logic
-        userIcon.addEventListener('click', (e) => {
+        // Toggle visibility
+        userIconParent.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             profileCard.style.display = profileCard.style.display === 'block' ? 'none' : 'block';
@@ -109,7 +137,7 @@ function initProfileCard() {
 
         // Close on outside click
         document.addEventListener('click', (e) => {
-            if (!profileCard.contains(e.target) && e.target !== userIcon && !userIcon.contains(e.target)) {
+            if (!profileCard.contains(e.target) && e.target !== userIconParent && !userIconParent.contains(e.target)) {
                 profileCard.style.display = 'none';
             }
         });

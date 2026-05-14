@@ -1,74 +1,88 @@
-// --- 2. TRACK COMPLAINT STATUS LOGIC (Track complain status.html) ---
+// --- TRACK COMPLAINT STATUS LOGIC ---
 
-function cancelComplaint() {
-    const confirmCancel = confirm("Are you sure you want to cancel this complaint?");
-    if (confirmCancel) {
-        const activeComplaintData = localStorage.getItem('activeComplaint');
+// Local cache of complaints for sync access
+let cachedComplaints = [];
+let activeComplaint = null;
+let complaintHistory = [];
 
-        if (activeComplaintData) {
-            try {
-                const complaint = JSON.parse(activeComplaintData);
-                // Update it in the master DB
-                if (typeof getComplaintById === 'function') {
-                    const dbComplaint = getComplaintById(complaint.id);
-                    if (dbComplaint) {
-                        dbComplaint.status = "Cancelled";
-                        if (typeof saveDatabase === 'function') saveDatabase();
-                    }
-                }
+function waitForDbReady() {
+    if (window.dbReady && typeof getComplaintsByCitizen === 'function') return Promise.resolve();
+    return new Promise(resolve => {
+        window.addEventListener('dbReady', resolve, { once: true });
+        setTimeout(resolve, 3000);
+    });
+}
 
-                // Re-sync local storage arrays from DB
-                syncUserComplaintsFromDB();
+async function syncComplaintsFromDB() {
+    try {
+        await waitForDbReady();
+        const loggedInUser = typeof getLoggedInUser === 'function' ? getLoggedInUser() : window.__authUser;
+        if (!loggedInUser || !loggedInUser.name) return [];
 
-                alert("Complaint has been cancelled successfully and moved to history.");
-            } catch (e) {
-                console.error("Error parsing active complaint data during cancellation:", e);
-                alert("Cancellation failed due to corrupted complaint data.");
-            }
-        } else {
-            alert("No active complaint to cancel.");
-        }
+        const complaints = await getComplaintsByCitizen(loggedInUser.name);
+        cachedComplaints = complaints;
 
-        window.location.href = "Active Complain.html?view=history";
+        complaintHistory = complaints.filter(c =>
+            c.status === 'Resolved' || c.status === 'Cancelled' || c.status === 'Closed'
+        );
+        const active = complaints.filter(c =>
+            c.status !== 'Resolved' && c.status !== 'Cancelled' && c.status !== 'Closed'
+        );
+        activeComplaint = active.length > 0 ? active[active.length - 1] : null;
+
+        return complaints;
+    } catch (error) {
+        console.error('Error syncing complaints:', error);
+        return [];
     }
 }
 
-function updateComplaint() {
-    // Check if there is actually a complaint to update before setting the flag
-    if (localStorage.getItem('activeComplaint')) {
-        localStorage.setItem('updateMode', 'true');
-        window.location.href = "Raise New Complaint.html";
+async function cancelComplaint() {
+    const confirmCancel = confirm("Are you sure you want to cancel this complaint?");
+    if (confirmCancel) {
+        await syncComplaintsFromDB();
+
+        if (activeComplaint) {
+            try {
+                if (typeof updateComplaintInDB === 'function') {
+                    const success = await updateComplaintInDB(activeComplaint.id, { status: 'Cancelled' });
+                    if (success) {
+                        await syncComplaintsFromDB();
+                        showPopup('Complaint has been cancelled successfully.', 'success');
+                        setTimeout(() => {
+                            window.location.href = "Active Complain.html?view=history";
+                        }, 1000);
+                    } else {
+                        showPopup('Error cancelling complaint.', 'error');
+                    }
+                }
+            } catch (e) {
+                console.error("Error parsing active complaint data during cancellation:", e);
+                showPopup('Cancellation failed due to corrupted complaint data.', 'error');
+            }
+        } else {
+            showPopup('No active complaint to cancel.', 'warning');
+        }
+    }
+}
+
+async function updateComplaintHandler() {
+    await syncComplaintsFromDB();
+    if (activeComplaint) {
+        window.location.href = "Raise New Complaint.html?updateId=" + encodeURIComponent(activeComplaint.id);
     } else {
-        alert("You must raise a complaint first before you can update it.");
+        showPopup('You must raise a complaint first before you can update it.', 'warning');
         window.location.href = "Active Complain.html";
     }
 }
 
-
-// --- Helper: Sync user complaints directly from SimulatedDB ---
-function syncUserComplaintsFromDB() {
-    const loggedInUser = localStorage.getItem('loggedInCitizenName');
-    if (!loggedInUser || typeof SimulatedDB === 'undefined' || !SimulatedDB.allComplaints) return;
-
-    const userComplaints = SimulatedDB.allComplaints.filter(c => c.citizenName === loggedInUser);
-
-    const history = userComplaints.filter(c => c.status === 'Resolved' || c.status === 'Cancelled' || c.status === 'Closed');
-    const active = userComplaints.filter(c => c.status !== 'Resolved' && c.status !== 'Cancelled' && c.status !== 'Closed');
-
-    localStorage.setItem('complaintHistory', JSON.stringify(history));
-
-    if (active.length > 0) {
-        // The dashboard expects a single active complaint, grab the latest
-        localStorage.setItem('activeComplaint', JSON.stringify(active[active.length - 1]));
-    } else {
-        localStorage.removeItem('activeComplaint');
-    }
-}
-
-// --- 4. DATA FETCHING AND VIEW LOGIC (Active Complain.html & Track complain status.html) ---
+// Keep old function name for compatibility
+window.updateComplaint = updateComplaintHandler;
+window.cancelComplaint = cancelComplaint;
 
 function createComplaintCard(complaint, isHistory = false) {
-    const statusColor = isHistory ? (complaint.status === 'Cancelled' ? 'red' : 'green') : '#00009c';
+    const isForwarded = complaint.status === 'Forwarded to Admin' || complaint.status === 'Escalated' || (complaint.escalationLevel || 0) > 0;
+    const statusColor = isHistory ? (complaint.status === 'Cancelled' ? 'red' : 'green') : (isForwarded ? '#dc3545' : '#00009c');
     const mainTitle = isHistory ? `History Details (Status: ${complaint.status})` : 'Complaint Details';
 
     return `
@@ -78,6 +92,14 @@ function createComplaintCard(complaint, isHistory = false) {
         <hr>
         <p><b>Complaint Type: </b>${complaint.type}</p>
         <p><b>Message:</b> ${complaint.message}</p>
+        <p><b>Status:</b> <span style="color:${statusColor}; font-weight:bold;">${complaint.status || 'New'}</span></p>
+        ${isForwarded ? `
+            <div style="background:#fff3cd; padding:12px; border-radius:5px; margin: 12px 0; border-left: 4px solid #ff9800;">
+                <p style="margin:0 0 6px 0;"><b>Forwarded To:</b> Admin Department</p>
+                <p style="margin:0 0 6px 0;"><b>Forwarded Date:</b> ${complaint.forwardedDate || 'N/A'}</p>
+                <p style="margin:0;"><b>Reason:</b> ${complaint.forwardingRemarks || 'Forwarded to higher authority for action.'}</p>
+            </div>
+        ` : ''}
         <p><b>Attachment:</b></p>
         <a href="${complaint.attachmentPath}" target="_blank">${complaint.attachmentName}</a>
         <br>
@@ -123,8 +145,7 @@ function getHistoryTableHTML(historyData) {
 }
 
 function viewHistoricalComplaintDetails(complaintId) {
-    const historyData = JSON.parse(localStorage.getItem('complaintHistory') || '[]');
-    const complaint = historyData.find(c => c.id === complaintId);
+    const complaint = complaintHistory.find(c => c.id === complaintId);
     const container = document.querySelector('.complaint-Submitted');
     const toggleContainer = document.querySelector('.view-toggle');
 
@@ -145,7 +166,7 @@ function viewHistoricalComplaintDetails(complaintId) {
     }
 }
 
-function loadActiveOrHistoryView() {
+async function loadActiveOrHistoryView() {
     // Check if this script should run on the current page
     if (!document.title.includes('User Dashboard')) {
         return;
@@ -155,22 +176,28 @@ function loadActiveOrHistoryView() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const viewMode = urlParams.get('view');
+    const complaintId = urlParams.get('complaintId');
     const toggleContainer = document.querySelector('.view-toggle');
 
+    if (toggleContainer) toggleContainer.style.display = 'block';
+
+    // Sync from API
+    await syncComplaintsFromDB();
+
+    if (complaintId && typeof getComplaintById === 'function') {
+        const exactComplaint = await getComplaintById(complaintId);
+        if (exactComplaint && exactComplaint.id) {
+            activeComplaint = exactComplaint;
+        }
+    }
+
+    const historyData = complaintHistory.slice();
+
     if (viewMode === 'history') {
-        if (toggleContainer) toggleContainer.style.display = 'block';
-        syncUserComplaintsFromDB();
-        const historyData = JSON.parse(localStorage.getItem('complaintHistory') || '[]');
-
         container.innerHTML = getHistoryTableHTML(historyData);
-
     } else {
-        if (toggleContainer) toggleContainer.style.display = 'block';
-        syncUserComplaintsFromDB();
-        const activeComplaintData = localStorage.getItem('activeComplaint');
-
-        if (activeComplaintData) {
-            const complaint = JSON.parse(activeComplaintData);
+        if (activeComplaint) {
+            const complaint = activeComplaint;
             container.innerHTML = createComplaintCard(complaint, false);
         } else if (historyData.length > 0) {
             const latest = historyData[historyData.length - 1];
@@ -200,26 +227,33 @@ function loadActiveOrHistoryView() {
     }
 }
 
-
-function fetchTrackStatus() {
-    syncUserComplaintsFromDB();
-    const activeComplaintData = localStorage.getItem('activeComplaint');
+async function fetchTrackStatus() {
+    // Sync from API
+    await syncComplaintsFromDB();
 
     // Check if this script should run on the current page
     if (document.title.includes('Complaint Status')) {
         const container = document.querySelector('.complaint-Submitted');
         if (!container) return;
 
-        if (activeComplaintData) {
-            const complaint = JSON.parse(activeComplaintData);
+        if (activeComplaint) {
+            const complaint = activeComplaint;
+            const isForwarded = complaint.status === 'Forwarded to Admin' || complaint.status === 'Escalated' || (complaint.escalationLevel || 0) > 0;
 
             container.innerHTML = `
-                <center><i class="fas fa-cogs" style="color: rgb(0, 183, 255); font-size: 500%;"></i></center>
+                <center><i class="fas ${isForwarded ? 'fa-share-square' : 'fa-cogs'}" style="color: ${isForwarded ? '#ff9800' : 'rgb(0, 183, 255)'}; font-size: 500%;"></i></center>
                 <br>
                 <center>
                     <h2 style="text-align: center; color: #f00;">Your complaint is ${complaint.status}</h2>
                     <p><b>Your Complaint ID:</b> ${complaint.id}</p>
                     <p><b>Expected Response:</b> ${complaint.expectedResponse || '14 Days'}</p>
+                    ${isForwarded ? `
+                        <div style="background:#fff3cd; padding:12px; border-radius:5px; margin: 15px auto; max-width: 70%; border-left: 4px solid #ff9800; text-align:left;">
+                            <p style="margin:0 0 6px 0;"><b>Forwarded To:</b> Admin Department</p>
+                            <p style="margin:0 0 6px 0;"><b>Forwarded Date:</b> ${complaint.forwardedDate || 'N/A'}</p>
+                            <p style="margin:0;"><b>Reason:</b> ${complaint.forwardingRemarks || 'Forwarded to higher authority for action.'}</p>
+                        </div>
+                    ` : ''}
                     <br><br>
                     <a href="#" class="Cbtn" onclick="cancelComplaint()">Cancel</a>
                     <a href="#" class="Ubtn" onclick="updateComplaint()">Update</a>
@@ -227,9 +261,8 @@ function fetchTrackStatus() {
                 </center>
                 <br><br>
             `;
-        } else if (localStorage.getItem('complaintHistory') && JSON.parse(localStorage.getItem('complaintHistory')).length > 0) {
-            const history = JSON.parse(localStorage.getItem('complaintHistory'));
-            const latest = history[history.length - 1];
+        } else if (complaintHistory.length > 0) {
+            const latest = complaintHistory[complaintHistory.length - 1];
 
             container.innerHTML = `
                 <center><i class="fas fa-check-circle" style="color: #28a745; font-size: 500%;"></i></center>
@@ -239,7 +272,7 @@ function fetchTrackStatus() {
                     <p><b>Complaint ID:</b> ${latest.id}</p>
                     <p><b>Category:</b> ${latest.type}</p>
                     ${latest.resolutionRemarks ? `<div style="background:#d4edda; padding:10px; border-radius:5px; margin: 15px auto; max-width: 60%; border-left: 4px solid #28a745;"><p style="margin:0; color:#155724;"><b>Remarks:</b> ${latest.resolutionRemarks}</p></div>` : ''}
-                    
+
                     ${(latest.status === 'Resolved' && !latest.citizenFeedback) ? `
                         <div id="feedback-container" style="margin: 20px auto; padding: 15px; border: 1px solid #ddd; border-radius: 8px; max-width: 60%; background: #f9f9f9;">
                             <h3 style="color:#00009c; font-size:16px; margin-top:0;">Rate Resolution</h3>
@@ -282,40 +315,36 @@ function fetchTrackStatus() {
     }
 }
 
-
-// --- 5. FEEDBACK SUBMISSION LOGIC ---
-window.submitCitizenFeedback = function (id) {
+window.submitCitizenFeedback = async function (id) {
     const rating = document.getElementById('complaintRating').value;
     const feedback = document.getElementById('complaintFeedback').value.trim();
 
     if (!feedback) {
-        alert("Please enter some feedback before submitting.");
+        showPopup('Please enter some feedback before submitting.', 'warning');
         return;
     }
 
-    if (typeof SimulatedDB !== 'undefined' && SimulatedDB.allComplaints) {
-        const dbComplaint = SimulatedDB.allComplaints.find(c => c.id === id);
-        if (dbComplaint) {
-            dbComplaint.citizenRating = parseInt(rating);
-            dbComplaint.citizenFeedback = feedback;
+    try {
+        const success = await updateComplaintInDB(id, {
+            citizenRating: parseInt(rating),
+            citizenFeedback: feedback
+        });
 
-            if (typeof saveDatabase === 'function') {
-                saveDatabase();
-            }
-
-            // Re-sync local storage so UI updates instantly
-            syncUserComplaintsFromDB();
-
-            alert("Thank you! Your feedback has been submitted successfully.");
-
-            // Refresh view
-            fetchTrackStatus();
+        if (success) {
+            await syncComplaintsFromDB();
+            showPopup('Thank you! Your feedback has been submitted successfully. ⭐', 'success');
+            await fetchTrackStatus();
+        } else {
+            showPopup('Error submitting feedback. Please try again.', 'error');
         }
+    } catch (error) {
+        console.error('Error submitting feedback:', error);
+        showPopup('An error occurred while submitting feedback.', 'error');
     }
 };
 
 // --- INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
-    loadActiveOrHistoryView();
-    fetchTrackStatus();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadActiveOrHistoryView();
+    await fetchTrackStatus();
 });

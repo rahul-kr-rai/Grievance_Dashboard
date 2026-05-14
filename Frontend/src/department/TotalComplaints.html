@@ -2,12 +2,17 @@
 <html lang="en">
 
 <head>
+    <script src="/Backend/db/userDB.js"></script>
+    <script src="/Backend/db/auth.js" data-role="admin"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Total Complaints</title>
     <link rel="stylesheet" href="style.css"> 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <script src="/Backend/db.js"></script>
+    <script src="main.js"></script>
+    <script src="/Frontend/src/script/popup.js"></script>
+    <script src="/Frontend/src/script/notifications.js" data-role="admin"></script>
 </head>
 <body>
     <header class="header">
@@ -74,35 +79,8 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>#12345</td>
-                            <td>Rajesh Kumar</td>
-                            <td>Electricity</td>
-                            <td>24-Sep-2025</td>
-                            <td class="status-pending">Pending</td>
-                            <td>Officer A</td>
-                            <td><button class="action-btn-update">View</button></td>
-                        </tr>
-                        <tr>
-                            <td>#12346</td>
-                            <td>Anita Sharma</td>
-                            <td>Road Issues</td>
-                            <td>25-Sep-2025</td>
-                            <td class="status-progress">In Progress</td>
-                            <td>Officer B</td>
-                            <td><button class="action-btn-update">View</button></td>
-                        </tr>
-                        <tr>
-                            <td>#12355</td>
-                            <td>Priya Das</td>
-                            <td>Water Supply</td>
-                            <td>15-Sep-2025</td>
-                            <td class="status-resolved">Resolved</td>
-                            <td>Officer C</td>
-                            <td><button class="action-btn-update">View</button></td>
-                        </tr>
-                        </tbody>
+                    <tbody id="complaintsTableBody">
+                    </tbody>
                 </table>
             </section>
         </div>
@@ -113,5 +91,9 @@
             <p>&copy; 2025 TDP Project All Rights Reserved</p>
         </div>
     </footer>
+    <script src="/Frontend/src/script/profile.js"></script>
 </body>
 </html>
+
+
+

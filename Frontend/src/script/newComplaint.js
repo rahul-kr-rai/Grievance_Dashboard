@@ -1,54 +1,59 @@
 // --- 3. COMPLAINT SUBMISSION AND STORAGE LOGIC (Raise New Complaint.html) ---
 
-function saveComplaintData(event) {
-    event.preventDefault(); 
+async function saveComplaintData(event) {
+    event.preventDefault();
 
     const form = event.target;
     const complaintType = form.elements['complaint'].value;
     const description = form.elements['description'].value;
     const attachmentFile = form.elements['file'].files[0];
-    
-    const isUpdate = localStorage.getItem('updateMode') === 'true';
-    let existingComplaint = {};
+
+    if (!complaintType || !description) {
+        showPopup('Please fill in all required fields.', 'error');
+        return;
+    }
+
     try {
-        existingComplaint = JSON.parse(localStorage.getItem('activeComplaint') || '{}');
-    } catch (e) {
-        console.error("Corrupted active complaint data found, starting fresh.");
+        const updateComplaintId = new URLSearchParams(window.location.search).get('updateId');
+        const isUpdate = Boolean(updateComplaintId);
+        let existingComplaint = isUpdate ? await getComplaintById(updateComplaintId) : {};
+
+        const loggedInUser = typeof getLoggedInUser === 'function' ? getLoggedInUser() : window.__authUser;
+        let complaint = {
+            citizenName: loggedInUser && loggedInUser.name ? loggedInUser.name : 'Citizen',
+            citizenEmail: loggedInUser && loggedInUser.email ? loggedInUser.email : '',
+            citizenPhone: loggedInUser && loggedInUser.phone ? loggedInUser.phone : 'N/A',
+            type: complaintType,
+            message: description,
+            attachmentName: attachmentFile ? attachmentFile.name : (existingComplaint.attachmentName || 'None'),
+            attachmentPath: attachmentFile ? URL.createObjectURL(attachmentFile) : (existingComplaint.attachmentPath || '#')
+        };
+
+        if (isUpdate && updateComplaintId) {
+            complaint.id = updateComplaintId;
+        }
+
+        // Call submitComplaintToDB - now async
+        if (typeof submitComplaintToDB === 'function') {
+            const generatedId = await submitComplaintToDB(complaint, isUpdate);
+
+            if (generatedId) {
+                showPopup(isUpdate ? 'Complaint updated successfully!' : 'Complaint submitted successfully!', 'success');
+                // Redirect to the confirmation page
+                setTimeout(() => {
+                    window.location.href = "Complain submitted.html?id=" + encodeURIComponent(generatedId);
+                }, 1000);
+            } else {
+                showPopup('Error submitting complaint. Please try again.', 'error');
+            }
+        } else {
+            console.error("submitComplaintToDB is not available. Ensure db.js is loaded.");
+            showPopup('Database error. Please refresh the page.', 'error');
+        }
+    } catch (error) {
+        console.error('Error saving complaint:', error);
+        showPopup('An error occurred while submitting the complaint.', 'error');
     }
-    
-    // Check for existing ID if updating, otherwise generate a new one
-    const complaintID = isUpdate && existingComplaint.id ? existingComplaint.id : 'RD' + Math.floor(Math.random() * 100000);
-    const date = isUpdate && existingComplaint.date ? existingComplaint.date : new Date().toLocaleDateString('en-GB');
-
-    let complaint = {
-        citizenName: localStorage.getItem('loggedInCitizenName') || 'Rahul Kumar',
-        type: complaintType,
-        message: description,
-        attachmentName: attachmentFile ? attachmentFile.name : (existingComplaint.attachmentName || 'None'),
-        attachmentPath: attachmentFile ? URL.createObjectURL(attachmentFile) : (existingComplaint.attachmentPath || '#')
-    };
-
-    if (isUpdate && existingComplaint.id) {
-        complaint.id = existingComplaint.id;
-    }
-
-    // Call submitComplaintToDB from db.js
-    if (typeof submitComplaintToDB === 'function') {
-        const generatedId = submitComplaintToDB(complaint, isUpdate);
-        
-        // Save to activeComplaint so confirmation page or old logic can still use it
-        complaint.id = generatedId;
-        complaint.status = isUpdate ? 'Under process (Updated)' : 'New';
-        complaint.dateSubmitted = new Date().toLocaleDateString('en-GB');
-        localStorage.setItem('activeComplaint', JSON.stringify(complaint));
-    } else {
-        console.error("submitComplaintToDB is not available. Ensure db.js is loaded.");
-    }
-
-    localStorage.removeItem('updateMode'); // Clear the update flag
-    
-    // Redirect to the confirmation page
-    window.location.href = "Complain submitted.html";
 }
 
 // 🌟 FINAL FIX: Robust Form Population and State Cleanup 🌟
@@ -59,50 +64,42 @@ function populateUpdateForm() {
     const descriptionArea = document.getElementById('description');
     if (!complaintSelect || !descriptionArea) return; // not on the Raise New Complaint page
 
-    // Check updateMode explicitly (string 'true' expected)
-    const updateMode = localStorage.getItem('updateMode') === 'true';
-    if (!updateMode) return; // not an update action
+    const updateComplaintId = new URLSearchParams(window.location.search).get('updateId');
+    if (!updateComplaintId) return;
 
-    // Try to parse active complaint data
-    let complaintData = null;
-    try {
-        complaintData = JSON.parse(localStorage.getItem('activeComplaint'));
-    } catch (e) {
-        console.error("Failed to parse activeComplaint:", e);
-    }
-
-    if (!complaintData || !complaintData.id) {
-        console.warn("Update requested but activeComplaint data is missing. Clearing updateMode.");
-        // Clear the flag so future loads don't keep trying to update
-        localStorage.removeItem('updateMode');
+    if (typeof getComplaintById !== 'function') {
+        console.warn("Update requested but complaint DB helper is not loaded.");
         return;
     }
 
-    // Populate fields
-    complaintSelect.value = complaintData.type || '';
-    descriptionArea.value = complaintData.message || '';
-
-    // Update heading (if present)
-    const heading = document.querySelector('.complaint-form h2');
-    if (heading) {
-        heading.innerHTML = `<i class="fas fa-edit"></i> Update Complaint: ${complaintData.id}`;
-        heading.style.color = '#00009c';
-    }
-
-    // Show current attachment link if available (and avoid duplicating it)
-    const fileUploadDiv = document.querySelector('.file-upload');
-    if (fileUploadDiv && complaintData.attachmentName) {
-        // Only add the "current attachment" UI once
-        if (!fileUploadDiv.innerHTML.includes('Current attachment')) {
-            const attachHtml = `
-                <p style="margin-top: 5px; font-size: 0.9em; color: gray;">
-                    Current attachment: <a href="${complaintData.attachmentPath}" target="_blank">${complaintData.attachmentName}</a>
-                    <br>(Choose a new file above to replace it.)
-                </p>
-            `;
-            fileUploadDiv.insertAdjacentHTML('beforeend', attachHtml);
+    getComplaintById(updateComplaintId).then(complaintData => {
+        if (!complaintData || !complaintData.id) {
+            console.warn("Update requested but complaint data is missing. Clearing update state.");
+            return;
         }
-    }
+
+        complaintSelect.value = complaintData.type || '';
+        descriptionArea.value = complaintData.message || '';
+
+        const heading = document.querySelector('.complaint-form h2');
+        if (heading) {
+            heading.innerHTML = `<i class="fas fa-edit"></i> Update Complaint: ${complaintData.id}`;
+            heading.style.color = '#00009c';
+        }
+
+        const fileUploadDiv = document.querySelector('.file-upload');
+        if (fileUploadDiv && complaintData.attachmentName) {
+            if (!fileUploadDiv.innerHTML.includes('Current attachment')) {
+                const attachHtml = `
+                    <p style="margin-top: 5px; font-size: 0.9em; color: gray;">
+                        Current attachment: <a href="${complaintData.attachmentPath}" target="_blank">${complaintData.attachmentName}</a>
+                        <br>(Choose a new file above to replace it.)
+                    </p>
+                `;
+                fileUploadDiv.insertAdjacentHTML('beforeend', attachHtml);
+            }
+        }
+    });
 }
 
 // --- 5. CONFIRMATION PAGE REDIRECTION LOGIC (Complain submitted.html) ---
@@ -110,8 +107,14 @@ function populateUpdateForm() {
 function handleConfirmationRedirect() {
     if (document.title.includes("Complaint Submitted - Confirmation")) {
         window.addEventListener('load', function() {
+            const submittedId = new URLSearchParams(window.location.search).get('id');
+            const idHeading = document.querySelector('.complaint-Submitted h3');
+            if (idHeading && submittedId) {
+                idHeading.textContent = 'Your Complaint ID: ' + submittedId;
+            }
+
             setTimeout(function() {
-                window.location.href = "Active Complain.html";
+                window.location.href = "Active Complain.html" + (submittedId ? "?complaintId=" + encodeURIComponent(submittedId) : "");
             }, 5000); 
         });
     }

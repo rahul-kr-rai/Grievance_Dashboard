@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <script src="/Backend/db/userDB.js"></script>
+    <script src="/Backend/db/auth.js" data-role="mukhiya"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mukhiya Dashboard</title>
@@ -10,31 +13,34 @@
     <script src="/Backend/db.js"></script>
     <style>
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
+            display: none;
+            position: fixed;
+            z-index: 1000;
             left: 0;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
         }
+
         .modal-content {
             background-color: #fefefe;
-            margin: 10% auto; 
+            margin: 10% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 50%; 
+            width: 50%;
             border-radius: 10px;
             font-family: Arial, sans-serif;
         }
+
         .close {
             color: #aaa;
             float: right;
             font-size: 28px;
             font-weight: bold;
         }
+
         .close:hover,
         .close:focus {
             color: black;
@@ -42,10 +48,13 @@
             cursor: pointer;
         }
     </style>
+    <script src="/Frontend/src/script/popup.js"></script>
 </head>
 
 <body>
     <header class="header">
+        <script src="/Backend/db/userDB.js"></script>
+        <script src="/Backend/db/auth.js" data-role="mukhiya"></script>
         <div class="header-container">
             <div class="logo">
                 <a href="MukhiyaDashboard.html"><img src="/Frontend/src/image/logo.png" alt="Logo"
@@ -74,97 +83,148 @@
                     <a href="ViewGrievances.html"><i class="fas fa-exclamation-circle"></i> View Grievances</a>
                     <a href="MakeAnnouncement.html"><i class="fas fa-bullhorn"></i> Make Announcement</a>
                     <a href="DirectConnect.html"><i class="fas fa-handshake"></i> Direct Connect</a>
-                    <a href="FundAllocation.html" class="active-link"><i class="fas fa-file-invoice-dollar"></i> Fund Allocation</a>
+                    <a href="FundAllocation.html" class="active-link"><i class="fas fa-file-invoice-dollar"></i> Fund
+                        Allocation</a>
                     <a href="/Frontend/src/index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
         </aside>
 
         <div class="content">
-            <h2>Fund Allocation</h2><section class="kpi-row"><div class="kpi-card"><p>Total Budget</p><h1 style="color: #1a237e;">? 50,00,000</h1></div><div class="kpi-card"><p>Allocated</p><h1 style="color:#ffc107;">? 12,50,000</h1></div><div class="kpi-card"><p>Available</p><h1 style="color: #28a745;">? 37,50,000</h1></div></section><section class="table-row"><h3 style="margin-top:0;">Recent Projects & Allocations</h3><table style="width:100%; border-collapse:collapse; background:white; text-align:left;"><thead><tr><th style="padding:10px; border-bottom:1px solid #ddd;">Project Name</th><th style="padding:10px; border-bottom:1px solid #ddd;">Category</th><th style="padding:10px; border-bottom:1px solid #ddd;">Allocated Amount</th><th style="padding:10px; border-bottom:1px solid #ddd;">Status</th></tr></thead><tbody id="fundTableBody"></tbody></table><br><button onclick="document.getElementById('fundModal').style.display='block'" style="background: #00009c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">+ Allocate New Fund</button></section>
-    <div id="fundModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="document.getElementById('fundModal').style.display='none'">&times;</span>
-            <h2 style="color: #00009c; border-bottom: 2px solid #ccc; padding-bottom: 10px;">Allocate New Fund</h2>
-            <label style="display: block; margin-top: 10px;">Project Name:</label>
-            <input type="text" id="fundProject" style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing:border-box;">
-            
-            <label style="display: block;">Category:</label>
-            <select id="fundCategory" style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing:border-box;">
-                <option>Infrastructure</option>
-                <option>Water Supply</option>
-                <option>Education</option>
-                <option>Healthcare</option>
-                <option>Sanitation</option>
-            </select>
-            
-            <label style="display: block;">Amount (?):</label>
-            <input type="number" id="fundAmount" style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing:border-box;">
-            
-            <button onclick="submitFundAllocation()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size:16px;">Confirm Allocation</button>
-        </div>
-    </div>
+            <h2>Fund Allocation</h2>
+            <section class="kpi-row">
+                <div class="kpi-card">
+                    <p>Total Budget</p>
+                    <h1 style="color: #1a237e;">₹ 50,00,000</h1>
+                </div>
+                <div class="kpi-card">
+                    <p>Allocated</p>
+                    <h1 style="color:#ffc107;">₹ 12,50,000</h1>
+                </div>
+                <div class="kpi-card">
+                    <p>Available</p>
+                    <h1 style="color: #28a745;">₹ 37,50,000</h1>
+                </div>
+            </section>
+            <section class="table-row">
+                <h3 style="margin-top:0;">Recent Projects & Allocations</h3>
+                <table style="width:100%; border-collapse:collapse; background:white; text-align:left;">
+                    <thead>
+                        <tr>
+                            <th style="padding:10px; border-bottom:1px solid #ddd;">Project Name</th>
+                            <th style="padding:10px; border-bottom:1px solid #ddd;">Category</th>
+                            <th style="padding:10px; border-bottom:1px solid #ddd;">Allocated Amount</th>
+                            <th style="padding:10px; border-bottom:1px solid #ddd;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fundTableBody"></tbody>
+                </table><br><button onclick="document.getElementById('fundModal').style.display='block'"
+                    style="background: #00009c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">+
+                    Allocate New Fund</button>
+            </section>
+            <div id="fundModal" class="modal">
+                <div class="modal-content">
+                    <span class="close"
+                        onclick="document.getElementById('fundModal').style.display='none'">&times;</span>
+                    <h2 style="color: #00009c; border-bottom: 2px solid #ccc; padding-bottom: 10px;">Allocate New Fund
+                    </h2>
+                    <label style="display: block; margin-top: 10px;">Project Name:</label>
+                    <input type="text" id="fundProject"
+                        style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing:border-box;">
 
-<div id="actionModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 style="color: #00009c; border-bottom: 2px solid #ccc; padding-bottom: 10px;">Take Action on Complaint</h2>
-            <div id="complaintPreview" style="background:#f1f1f1; padding:15px; margin-top:15px; border-radius:5px; border-left: 4px solid #00009c; font-size: 14px;"></div>
-            <p style="font-size: 18px; margin-top: 15px;">Are you able to resolve this issue?</p>
-            <button onclick="showResolveForm()" style="background: #28a745; color: white; padding: 10px 20px; margin: 10px 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Yes</button>
-            <button onclick="showForwardForm()" style="background: #dc3545; color: white; padding: 10px 20px; margin: 10px 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">No</button>
-            
-            <div id="resolveForm" style="display: none; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                <h3 style="color: #28a745;"><i class="fas fa-calendar-check"></i> Schedule Appointment / Time</h3>
-                <label style="display: block; margin-top: 10px;">Date:</label>
-                <input type="date" style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
-                <label style="display: block;">Time:</label>
-                <input type="time" style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
-                <button onclick="submitAction('resolve')" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%;">Schedule</button>
+                    <label style="display: block;">Category:</label>
+                    <select id="fundCategory"
+                        style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing:border-box;">
+                        <option>Infrastructure</option>
+                        <option>Water Supply</option>
+                        <option>Education</option>
+                        <option>Healthcare</option>
+                        <option>Sanitation</option>
+                    </select>
+
+                    <label style="display: block;">Amount (?):</label>
+                    <input type="number" id="fundAmount"
+                        style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing:border-box;">
+
+                    <button onclick="submitFundAllocation()"
+                        style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size:16px;">Confirm
+                        Allocation</button>
+                </div>
             </div>
 
-            <div id="forwardForm" style="display: none; margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px;">
-                <h3 style="color: #856404;"><i class="fas fa-share-square"></i> Forward to Higher Authority</h3>
-                <label style="display: block; margin-top: 10px;">Describe the reason:</label>
-                <textarea placeholder="Enter details..." rows="4" style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
-                <button onclick="submitAction('forward')" style="background: #ff9800; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%;">Forward</button>
+            <div id="actionModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h2 style="color: #00009c; border-bottom: 2px solid #ccc; padding-bottom: 10px;">Take Action on
+                        Complaint</h2>
+                    <div id="complaintPreview"
+                        style="background:#f1f1f1; padding:15px; margin-top:15px; border-radius:5px; border-left: 4px solid #00009c; font-size: 14px;">
+                    </div>
+                    <p style="font-size: 18px; margin-top: 15px;">Are you able to resolve this issue?</p>
+                    <button onclick="showResolveForm()"
+                        style="background: #28a745; color: white; padding: 10px 20px; margin: 10px 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Yes</button>
+                    <button onclick="showForwardForm()"
+                        style="background: #dc3545; color: white; padding: 10px 20px; margin: 10px 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">No</button>
+
+                    <div id="resolveForm"
+                        style="display: none; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                        <h3 style="color: #28a745;"><i class="fas fa-calendar-check"></i> Schedule Appointment / Time
+                        </h3>
+                        <label style="display: block; margin-top: 10px;">Date:</label>
+                        <input type="date"
+                            style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+                        <label style="display: block;">Time:</label>
+                        <input type="time"
+                            style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+                        <button onclick="submitAction('resolve')"
+                            style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%;">Schedule</button>
+                    </div>
+
+                    <div id="forwardForm"
+                        style="display: none; margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px;">
+                        <h3 style="color: #856404;"><i class="fas fa-share-square"></i> Forward to Higher Authority</h3>
+                        <label style="display: block; margin-top: 10px;">Describe the reason:</label>
+                        <textarea id="forwardReason" placeholder="Enter details..." rows="4"
+                            style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
+                        <button onclick="submitAction('forward')"
+                            style="background: #ff9800; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%;">Forward</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <script src="/Frontend/src/script/profile.js"></script>
-    
-`r`n`r`n<div id="fundModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
-    <div style="background-color:#fff; margin:10% auto; padding:20px; width:40%; border-radius:10px;">
-        <span onclick="document.getElementById('fundModal').style.display='none'" style="float:right; cursor:pointer; font-size:24px; font-weight:bold;">&times;</span>
-        <h3 style="color:#00009c; margin-top:0;">Allocate New Fund</h3>
-        <input type="text" id="fundProject" placeholder="Project Name" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
-        <select id="fundCategory" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
-            <option value="Infrastructure">Infrastructure</option>
-            <option value="Water Supply">Water Supply</option>
-            <option value="Education">Education</option>
-            <option value="Health">Health</option>
-            <option value="Welfare">Welfare</option>
-        </select>
-        <input type="number" id="fundAmount" placeholder="Amount (?)" style="width:100%; padding:10px; margin-bottom:15px; box-sizing:border-box;">
-        <button onclick="submitFundAllocation()" style="background:#28a745; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; width:100%;">Allocate Fund</button>
-    </div>
-</div>
+            <script src="/Frontend/src/script/profile.js"></script>
 
-    
-    
+            <div id="fundModal" class="modal"
+                style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+                <div style="background-color:#fff; margin:10% auto; padding:20px; width:40%; border-radius:10px;">
+                    <span onclick="document.getElementById('fundModal').style.display='none'"
+                        style="float:right; cursor:pointer; font-size:24px; font-weight:bold;">&times;</span>
+                    <h3 style="color:#00009c; margin-top:0;">Allocate New Fund</h3>
+                    <input type="text" id="fundProject" placeholder="Project Name"
+                        style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
+                    <select id="fundCategory"
+                        style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
+                        <option value="Infrastructure">Infrastructure</option>
+                        <option value="Water Supply">Water Supply</option>
+                        <option value="Education">Education</option>
+                        <option value="Health">Health</option>
+                        <option value="Welfare">Welfare</option>
+                    </select>
+                    <input type="number" id="fundAmount" placeholder="Amount (?)"
+                        style="width:100%; padding:10px; margin-bottom:15px; box-sizing:border-box;">
+                    <button onclick="submitFundAllocation()"
+                        style="background:#28a745; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; width:100%;">Allocate
+                        Fund</button>
+                </div>
+            </div>
+
+
+
 </body>
 
 
-    <script src="../../Backend/db.js"></script>
-    <script src="../script/mukhiya.js"></script>
+<script src="../../Backend/db.js"></script>
+<script src="../script/mukhiya.js"></script>
 </body>
+
 </html>
-
-
-
-
-
-
-
-

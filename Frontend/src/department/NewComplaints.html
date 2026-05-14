@@ -2,14 +2,18 @@
 <html lang="en">
 
 <head>
+    <script src="/Backend/db/userDB.js"></script>
+    <script src="/Backend/db/auth.js" data-role="admin"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - New Complaints</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <script src="main.js"></script>
     <script src="/Backend/db.js"></script>
+    <script src="main.js"></script>
+    <script src="/Frontend/src/script/popup.js"></script>
+    <script src="/Frontend/src/script/notifications.js" data-role="admin"></script>
 </head>
 
 <body>
@@ -83,33 +87,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>#12348</td>
-                            <td>Ravi Verma</td>
-                            <td>Water Supply</td>
-                            <td>17-Nov-2025</td>
-                            <td class="status-new">New</td>
-                            <td><button class="action-btn-view">View/Assign</button></td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>#12349</td>
-                            <td>Preeti Singh</td>
-                            <td>Road Damage</td>
-                            <td>16-Nov-2025</td>
-                            <td class="status-new">New</td>
-                            <td><button class="action-btn-view">View/Assign</button></td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>
-                            <td>#12350</td>
-                            <td>Mohan Deshmukh</td>
-                            <td>Electricity Billing</td>
-                            <td>16-Nov-2025</td>
-                            <td class="status-new">New</td>
-                            <td><button class="action-btn-view">View/Assign</button></td>
-                        </tr>
                     </tbody>
                 </table>
             </section>

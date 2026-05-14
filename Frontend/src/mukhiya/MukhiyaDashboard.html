@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="/Backend/db/userDB.js"></script>
+    <script src="/Backend/db/auth.js" data-role="mukhiya"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mukhiya Dashboard</title>
@@ -42,10 +44,13 @@
             cursor: pointer;
         }
     </style>
+    <script src="/Frontend/src/script/popup.js"></script>
 </head>
 
 <body>
     <header class="header">
+    <script src="/Backend/db/userDB.js"></script>
+    <script src="/Backend/db/auth.js" data-role="mukhiya"></script>
         <div class="header-container">
             <div class="logo">
                 <a href="MukhiyaDashboard.html"><img src="/Frontend/src/image/logo.png" alt="Logo"
@@ -151,7 +156,7 @@
             <div id="forwardForm" style="display: none; margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px;">
                 <h3 style="color: #856404;"><i class="fas fa-share-square"></i> Forward to Higher Authority</h3>
                 <label style="display: block; margin-top: 10px;">Describe the reason:</label>
-                <textarea placeholder="Enter details..." rows="4" style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
+                <textarea id="forwardReason" placeholder="Enter details..." rows="4" style="width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
                 <button onclick="submitAction('forward')" style="background: #ff9800; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%;">Forward</button>
             </div>
         </div>
@@ -166,6 +171,8 @@
     <script src="../script/mukhiya.js"></script>
 </body>
 </html>
+
+
 
 
 

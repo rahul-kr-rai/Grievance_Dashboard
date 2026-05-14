@@ -3,116 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Login & Registration Form</title>
-  <!--- Custom CSS File --->
+  <title>Citizen Login</title>
   <link rel="stylesheet" href="/Frontend/src/css/style.css">
+  <script src="/Backend/db/userDB.js"></script>
   <style>
-    /* Example styles for the forms */
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .form {
-      display: none;
-    }
-    .form.active {
-      display: block;
-    }
-    .toggle {
-      cursor: pointer;
-      color: blue;
-      text-decoration: underline;
-    }
+    .container { display: flex; flex-direction: column; align-items: center; }
+    .form { display: none; }
+    .form.active { display: block; }
+    .toggle { cursor: pointer; color: blue; text-decoration: underline; }
+    .error-msg { color: #dc3545; font-size: 14px; margin-top: 8px; display: none; }
   </style>
+    <script src="/Frontend/src/script/popup.js"></script>
 </head>
 <body>
   <div class="container">
+
+    <!-- LOGIN FORM -->
     <div class="login form active">
-      <header>Login</header>
-      <form action="#" id="loginForm">
+      <header>Citizen Login</header>
+      <form action="#" id="loginForm" onsubmit="return false;">
         <input type="email" id="loginEmail" placeholder="Enter your email" required>
         <input type="password" id="loginPass" placeholder="Enter your password" required>
         <a href="#">Forgot password?</a>
+        <p id="loginError" class="error-msg"></p>
         <input type="button" class="button" value="Login" onclick="loginCitizen()">
       </form>
       <div class="signup">
-        <span>Don't have an account? 
+        <span>Don't have an account?
           <span class="toggle" onclick="toggleForms('registration')">Register</span>
         </span>
       </div>
     </div>
+
+    <!-- REGISTER FORM -->
     <div class="registration form">
-      <header>Register</header>
-      <form action="#" id="registerForm">
+      <header>Create Account</header>
+      <form action="#" id="registerForm" onsubmit="return false;">
         <input type="text" id="regName" placeholder="Enter your full name" required>
         <input type="text" id="regPhone" placeholder="Enter your phone number" required>
         <input type="email" id="regEmail" placeholder="Enter your email" required>
         <input type="password" id="regPass" placeholder="Create a password" required>
         <input type="password" id="regConfirmPass" placeholder="Confirm your password" required>
+        <p id="regError" class="error-msg"></p>
         <input type="button" class="button" value="Register" onclick="registerCitizen()">
       </form>
       <div class="signup">
-        <span>Already have an account? 
+        <span>Already have an account?
           <span class="toggle" onclick="toggleForms('login')">Login</span>
         </span>
       </div>
     </div>
+
   </div>
 
   <script>
-    function registerCitizen() {
-      const name = document.getElementById('regName').value;
-      const phone = document.getElementById('regPhone').value;
-      const email = document.getElementById('regEmail').value;
-      if (!name || !email) return alert('Please enter your name and email');
-      
-      localStorage.setItem('loggedInCitizenName', name);
-      localStorage.setItem('loggedInCitizenEmail', email);
-      localStorage.setItem('loggedInCitizenPhone', phone);
-      localStorage.setItem('citizenName', name); // Used by chat system
-      
-      // Clear old user data
-      localStorage.removeItem('activeComplaint');
-      localStorage.removeItem('complaintHistory');
-      
-      window.location.href = "Dashbord.html"; 
+    async function registerCitizen() {
+      const name    = document.getElementById('regName').value.trim();
+      const phone   = document.getElementById('regPhone').value.trim();
+      const email   = document.getElementById('regEmail').value.trim();
+      const pass    = document.getElementById('regPass').value;
+      const confirm = document.getElementById('regConfirmPass').value;
+      const errEl   = document.getElementById('regError');
+
+      errEl.style.display = 'none';
+
+      if (!name || !email || !pass) {
+        errEl.textContent = 'Please fill in all required fields.';
+        errEl.style.display = 'block';
+        return;
+      }
+      if (pass !== confirm) {
+        errEl.textContent = 'Passwords do not match.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const result = await registerCitizenToDB(name, email, pass, phone);
+      if (!result.success) {
+        errEl.textContent = result.message;
+        errEl.style.display = 'block';
+        return;
+      }
+
+      // Auto-login after registration
+      const loginResult = await loginUserToDB(email, pass, 'citizen');
+      if (loginResult.success) {
+        window.location.href = "Dashbord.html";
+      }
     }
 
-    function loginCitizen() {
-      const email = document.getElementById('loginEmail').value;
-      if (!email) return alert('Please enter your email');
-      
-      const savedEmail = localStorage.getItem('loggedInCitizenEmail');
-      let resolvedName;
-      if (email === savedEmail) {
-          resolvedName = localStorage.getItem('loggedInCitizenName') || email.split('@')[0];
-      } else {
-          resolvedName = email.split('@')[0];
-          localStorage.setItem('loggedInCitizenName', resolvedName);
-          localStorage.setItem('loggedInCitizenEmail', email);
-          localStorage.setItem('loggedInCitizenPhone', 'N/A');
+    async function loginCitizen() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass  = document.getElementById('loginPass').value;
+      const errEl = document.getElementById('loginError');
+
+      errEl.style.display = 'none';
+
+      if (!email || !pass) {
+        errEl.textContent = 'Please enter your email and password.';
+        errEl.style.display = 'block';
+        return;
       }
-      
-      localStorage.setItem('citizenName', resolvedName); // Used by chat system
-      
-      // Clear old user data to prevent cross-user leakage
-      localStorage.removeItem('activeComplaint');
-      localStorage.removeItem('complaintHistory');
-      
-      window.location.href = "Dashbord.html"; 
+
+      const result = await loginUserToDB(email, pass, 'citizen');
+      if (!result.success) {
+        errEl.textContent = 'Invalid email or password. Please register first.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      window.location.href = "Dashbord.html";
     }
 
     function toggleForms(formToShow) {
-      const forms = document.querySelectorAll('.form');
-      forms.forEach(form => form.classList.remove('active'));
-
-      const targetForm = document.querySelector(`.${formToShow}`);
-      if (targetForm) {
-        targetForm.classList.add('active');
-      }
+      document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+      const target = document.querySelector('.' + formToShow);
+      if (target) target.classList.add('active');
     }
   </script>
 </body>
 </html>
+

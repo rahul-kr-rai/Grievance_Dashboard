@@ -1,92 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Login & Registration Form</title>
-  <!--- Custom CSS File --->
+  <title>Admin / Officer Login</title>
   <link rel="stylesheet" href="/Frontend/src/css/style.css">
+  <script src="/Backend/db/userDB.js"></script>
   <style>
-    /* Example styles for the forms */
     .container {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+
     .form {
       display: none;
     }
+
     .form.active {
       display: block;
     }
+
     .toggle {
       cursor: pointer;
       color: blue;
       text-decoration: underline;
     }
+
+    .error-msg {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 8px;
+      display: none;
+    }
   </style>
+    <script src="/Frontend/src/script/popup.js"></script>
+    <script src="/Frontend/src/script/notifications.js" data-role="admin"></script>
 </head>
+
 <body>
   <div class="container">
+
+    <!-- LOGIN FORM -->
     <div class="login form active">
-      <header>Login</header>
-      <form action="#">
-        <select id="userRole" required style="width: 100%; height: 50px; padding: 0 15px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px;">
-          <option value="" disabled selected>Select Role</option>
-          <option value="Admin">Admin</option>
-          <option value="WardMember">Ward Member</option>
-          <option value="Sarpanch">Sarpanch</option>
-          <option value="Mukhiya">Mukhiya</option>
-          <option value="NagarNigam">Nagar Nigam</option>
-        </select>
-        <input type="email" placeholder="Enter your email" required>
-        <input type="password" placeholder="Enter your password" required>
+      <header>Department Login</header>
+      <form action="#" onsubmit="return false;">
+        <input type="email" id="adminEmail" placeholder="Enter your email" required>
+        <input type="password" id="adminPass" placeholder="Enter your password" required>
         <a href="#">Forgot password?</a>
-        <input type="button" class="button" value="Login" onclick="redirectToPage()">
+        <p id="loginError" class="error-msg"></p>
+        <input type="button" class="button" value="Login" onclick="loginAdmin()">
       </form>
       <div class="signup">
-        <span>Don't have an account? 
+        <span>Need an account?
           <span class="toggle" onclick="toggleForms('registration')">Register</span>
         </span>
       </div>
     </div>
+
+    <!-- REGISTER FORM -->
     <div class="registration form">
-      <header>Register</header>
-      <form action="#">
-        <input type="text" placeholder="Enter your full name" required>
-        <input type="email" placeholder="Enter your email" required>
-        <input type="password" placeholder="Create a password" required>
-        <input type="password" placeholder="Confirm your password" required>
-        <input type="button" class="button" value="Register" onclick="redirectToPage()">
+      <header>Register Staff</header>
+      <form action="#" onsubmit="return false;">
+        <input type="text" id="regName" placeholder="Enter your full name" required>
+        <input type="email" id="regEmail" placeholder="Enter your email" required>
+        <input type="password" id="regPass" placeholder="Create a password" required>
+        <input type="password" id="regConfirmPass" placeholder="Confirm your password" required>
+        <p id="regError" class="error-msg"></p>
+        <input type="button" class="button" value="Register" onclick="registerAdmin()">
       </form>
       <div class="signup">
-        <span>Already have an account? 
+        <span>Already have an account?
           <span class="toggle" onclick="toggleForms('login')">Login</span>
         </span>
       </div>
     </div>
+
   </div>
 
   <script>
-    function redirectToPage() {
-      const role = document.getElementById('userRole') ? document.getElementById('userRole').value : null;
-      if (role === 'Mukhiya') {
-        window.location.href = "/Frontend/src/mukhiya/MukhiyaDashboard.html";
-      } else {
-        window.location.href = "AdminDashboard.html"; 
+    async function loginAdmin() {
+      var email = document.getElementById('adminEmail').value.trim();
+      var pass  = document.getElementById('adminPass').value;
+      var errEl = document.getElementById('loginError');
+
+      errEl.style.display = 'none';
+
+      if (!email || !pass) {
+        errEl.textContent = 'Please enter your email and password.';
+        errEl.style.display = 'block';
+        return;
       }
+
+      // null role = match by email+password only, redirect based on actual stored role
+      var result = await loginUserToDB(email, pass, null);
+
+      if (!result.success) {
+        errEl.textContent = 'Invalid email or password. Please register first.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      if (result.user.role === 'citizen') {
+        errEl.textContent = 'Citizen accounts must log in from the citizen portal.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      if (result.user.role === 'mukhiya') {
+        window.location.href = '/Frontend/src/mukhiya/MukhiyaDashboard.html';
+      } else {
+        window.location.href = 'AdminDashboard.html';
+      }
+    }
+
+    async function registerAdmin() {
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const pass = document.getElementById('regPass').value;
+      const confirm = document.getElementById('regConfirmPass').value;
+      const errEl = document.getElementById('regError');
+
+      errEl.style.display = 'none';
+
+      if (!name || !email || !pass) {
+        errEl.textContent = 'Please fill all fields.';
+        errEl.style.display = 'block';
+        return;
+      }
+      if (pass !== confirm) {
+        errEl.textContent = 'Passwords do not match.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const result = await registerUserToDB(name, email, pass, 'N/A', 'admin');
+      if (!result.success) {
+        errEl.textContent = result.message;
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const loginResult = await loginUserToDB(email, pass, 'admin');
+      if (loginResult.success) window.location.href = "AdminDashboard.html";
     }
 
     function toggleForms(formToShow) {
-      const forms = document.querySelectorAll('.form');
-      forms.forEach(form => form.classList.remove('active'));
-
-      const targetForm = document.querySelector(`.${formToShow}`);
-      if (targetForm) {
-        targetForm.classList.add('active');
-      }
+      document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+      const target = document.querySelector('.' + formToShow);
+      if (target) target.classList.add('active');
     }
   </script>
 </body>
+
 </html>

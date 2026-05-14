@@ -1,33 +1,329 @@
 // ====================================================================
-//                       CHART DEFINITIONS (Functions first)
+//                       CHART DEFINITIONS (Async Version)
 // ====================================================================
 
-function initializeDashboardCharts() {
+let cachedAdminComplaints = [];
+
+function getApiBase() {
+    return `${window.location.origin}/api`;
+}
+
+function waitForDbReady() {
+    if (window.dbReady) return Promise.resolve();
+    return new Promise(resolve => {
+        window.addEventListener('dbReady', resolve, { once: true });
+        setTimeout(resolve, 3000);
+    });
+}
+
+async function loadAdminComplaints() {
+    try {
+        const response = await fetch(`${getApiBase()}/complaints`);
+        const data = await response.json();
+        if (data.success) {
+            cachedAdminComplaints = data.complaints || [];
+        }
+    } catch (error) {
+        console.error('Error loading complaints for admin:', error);
+    }
+    return cachedAdminComplaints;
+}
+
+function isEscalatedComplaint(c) {
+    return (c.escalationLevel || 0) > 0 || c.status === 'Escalated' || c.status === 'Forwarded to Admin';
+}
+
+function isClosedComplaint(c) {
+    return c.status === 'Resolved' || c.status === 'Closed' || c.status === 'Cancelled';
+}
+
+function statusPill(status) {
+    var bg = '#e2e3e5';
+    var color = '#383d41';
+    if (status === 'New') { bg = '#cce5ff'; color = '#004085'; }
+    else if (status === 'Resolved' || status === 'Closed') { bg = '#d4edda'; color = '#155724'; }
+    else if (status === 'Escalated' || status === 'Forwarded to Admin') { bg = '#f8d7da'; color = '#721c24'; }
+    else if (status && status.indexOf('Progress') !== -1) { bg = '#fff3cd'; color = '#856404'; }
+    var label = (status === 'Forwarded to Admin') ? 'Escalated' : (status || 'New');
+    return `<span style="padding:4px 9px; border-radius:12px; font-size:12px; font-weight:bold; background:${bg}; color:${color};">${label}</span>`;
+}
+
+function parseDateString(d) {
+    if (!d) return null;
+    var p = d.split('/');
+    return p.length === 3 ? new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10)) : null;
+}
+
+function daysOpen(c) {
+    var start = parseDateString(c.dateSubmitted);
+    if (!start) return '-';
+    return Math.max(0, Math.floor((new Date() - start) / 86400000));
+}
+
+function actionButton(c) {
+    const id = (c.id || '').toString().replace(/'/g, '&apos;');
+    return `<button style="padding:6px 14px; border:0; border-radius:5px; background:#0d6efd; color:#fff; cursor:pointer; font-weight:600; font-size:13px; transition:background 0.2s;" onmouseover="this.style.background='#0b5ed7'" onmouseout="this.style.background='#0d6efd'" onclick="openComplaintModal('${id}')"><i class='fas fa-eye' style='margin-right:5px;'></i>View</button>`;
+}
+
+// ---- COMPLAINT DETAILS MODAL ----
+
+function injectComplaintModal() {
+    if (document.getElementById('adminComplaintModal')) return;
+    const modal = document.createElement('div');
+    modal.id = 'adminComplaintModal';
+    modal.innerHTML = `
+    <div id="adminComplaintModalOverlay" onclick="closeComplaintModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:3000;transition:opacity 0.2s;"></div>
+    <div id="adminComplaintModalBox" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.95);z-index:3001;background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.25);width:min(94vw,950px);max-height:90vh;overflow-y:auto;font-family:Arial,sans-serif;transition:transform 0.2s,opacity 0.2s;opacity:0;">
+
+        <!-- Header -->
+        <div style="padding:22px 28px 16px;border-bottom:1px solid #e9ecef;display:flex;align-items:center;justify-content:space-between;">
+            <h2 style="margin:0;color:#1a237e;font-size:1.35rem;display:flex;align-items:center;gap:10px;">
+                <i class="fas fa-file-alt" style="color:#1a237e;"></i>
+                Complaint Details
+            </h2>
+            <span onclick="closeComplaintModal()" style="cursor:pointer;font-size:22px;color:#999;line-height:1;transition:color 0.2s;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">&times;</span>
+        </div>
+
+        <!-- Body -->
+        <div style="padding:24px 28px;">
+
+            <!-- Two-column info grid -->
+            <div id="adminModalInfoGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 30px;margin-bottom:20px;"></div>
+
+            <hr style="border:none;border-top:1px solid #e9ecef;margin:20px 0;">
+
+            <!-- Message block -->
+            <div id="adminModalMessage" style="background:#f8f9fa;border-left:4px solid #1a237e;border-radius:0 6px 6px 0;padding:16px 18px;margin-bottom:24px;">
+                <strong style="display:block;margin-bottom:6px;">Message/Description:</strong>
+                <span id="adminModalMessageText" style="color:#555;">-</span>
+            </div>
+
+            <!-- Resolve section (hidden for resolved/closed) -->
+            <div id="adminModalResolveSection">
+                <h3 style="color:#28a745;font-size:1rem;margin:0 0 12px;display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-check-circle"></i>
+                    Resolve &amp; Close Complaint
+                </h3>
+                <textarea id="adminModalRemarks" placeholder="Enter remarks or resolution details..." rows="4"
+                    style="width:100%;padding:12px;border:1px solid #ced4da;border-radius:6px;font-size:14px;resize:vertical;box-sizing:border-box;outline:none;transition:border 0.2s;"
+                    onfocus="this.style.border='1px solid #0d6efd'" onblur="this.style.border='1px solid #ced4da'"></textarea>
+                <button onclick="resolveComplaintFromModal()" id="adminModalResolveBtn"
+                    style="margin-top:14px;background:#28a745;color:#fff;border:none;border-radius:6px;padding:12px 28px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.2s;"
+                    onmouseover="this.style.background='#218838'" onmouseout="this.style.background='#28a745'">
+                    <i class="fas fa-check-circle"></i> Mark as Resolved
+                </button>
+            </div>
+        </div>
+    </div>`;
+    document.body.appendChild(modal);
+}
+
+let _activeModalComplaintId = null;
+
+window.openComplaintModal = function(id) {
+    const c = cachedAdminComplaints.find(x => String(x.id) === String(id));
+    if (!c) { console.warn('Complaint not found:', id); return; }
+    _activeModalComplaintId = id;
+
+    // Build info grid rows
+    const isClosed = isClosedComplaint(c);
+    const statusColor = (c.status === 'Resolved' || c.status === 'Closed') ? '#28a745'
+        : (c.status === 'In Progress' || (c.status && c.status.includes('Progress'))) ? '#0d6efd'
+        : (c.status === 'Escalated' || c.status === 'Forwarded to Admin') ? '#dc3545' : '#856404';
+
+    const fields = [
+        ['Complaint ID', `#${c.id}`],
+        ['Status', `<strong style="color:${statusColor};">${c.status || 'New'}</strong>`],
+        ['Citizen Name', c.citizenName || 'Unknown'],
+        ['Date Submitted', c.dateSubmitted || '-'],
+        ['Category', c.type || 'N/A'],
+        ['Assigned Officer', c.assignedOfficer || '-'],
+    ];
+    if (c.dateResolved) fields.push(['Date Resolved', c.dateResolved], ['', '']);
+    if (c.forwardingRemarks) fields.push(['Forwarding Remarks', c.forwardingRemarks], ['', '']);
+
+    document.getElementById('adminModalInfoGrid').innerHTML = fields.map(([label, value]) =>
+        label ? `<div><strong style="color:#333;">${label}:</strong> <span style="color:#555;">${value}</span></div>` : '<div></div>'
+    ).join('');
+
+    document.getElementById('adminModalMessageText').textContent = c.message || c.description || '-';
+    document.getElementById('adminModalRemarks').value = c.resolutionRemarks || c.forwardingRemarks || '';
+
+    // Show/hide resolve section
+    const resolveSection = document.getElementById('adminModalResolveSection');
+    resolveSection.style.display = isClosed ? 'none' : 'block';
+
+    // Animate in
+    const overlay = document.getElementById('adminComplaintModalOverlay');
+    const box     = document.getElementById('adminComplaintModalBox');
+    overlay.style.display = 'block';
+    box.style.display     = 'block';
+    requestAnimationFrame(() => {
+        box.style.transform = 'translate(-50%,-50%) scale(1)';
+        box.style.opacity   = '1';
+    });
+    document.body.style.overflow = 'hidden';
+};
+
+window.closeComplaintModal = function() {
+    const overlay = document.getElementById('adminComplaintModalOverlay');
+    const box     = document.getElementById('adminComplaintModalBox');
+    if (!overlay) return;
+    box.style.transform = 'translate(-50%,-50%) scale(0.95)';
+    box.style.opacity   = '0';
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        box.style.display     = 'none';
+    }, 180);
+    document.body.style.overflow = '';
+};
+
+window.resolveComplaintFromModal = async function() {
+    if (!_activeModalComplaintId) return;
+    const remarks = document.getElementById('adminModalRemarks').value.trim() || 'Resolved by Admin.';
+    const btn = document.getElementById('adminModalResolveBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resolving...';
+
+    try {
+        const response = await fetch(`${getApiBase()}/complaints/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: _activeModalComplaintId,
+                updates: {
+                    status: 'Resolved',
+                    dateResolved: new Date().toLocaleDateString('en-GB'),
+                    resolutionRemarks: remarks
+                }
+            })
+        });
+        const data = await response.json();
+        if (data.success) {
+            closeComplaintModal();
+            cachedAdminComplaints = [];
+            await renderAdminDashboardData();
+            if (typeof showPopup === 'function') showPopup('Complaint marked as Resolved successfully!', 'success');
+        } else {
+            if (typeof showPopup === 'function') showPopup('Error resolving complaint.', 'error');
+        }
+    } catch (err) {
+        console.error('Error resolving:', err);
+        if (typeof showPopup === 'function') showPopup('Network error while resolving.', 'error');
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-check-circle"></i> Mark as Resolved';
+};
+
+function getAdminPageMode() {
+    var path = window.location.pathname;
+    if (path.includes('NewComplaints')) return 'New';
+    if (path.includes('EscalatedComplaints')) return 'Escalated';
+    if (path.includes('AssignedComplaints')) return 'Assigned';
+    if (path.includes('PendingComplaints')) return 'Pending';
+    if (path.includes('ResolvedComplaints')) return 'Resolved';
+    if (path.includes('TotalComplaints')) return 'All';
+    if (path.includes('AdminDashboard')) return 'Dashboard';
+    return null;
+}
+
+function filterComplaintsForMode(allComplaints, mode) {
+    if (mode === 'New') return allComplaints.filter(c => c.status === 'New');
+    if (mode === 'Escalated') return allComplaints.filter(isEscalatedComplaint);
+    if (mode === 'Assigned') return allComplaints.filter(c => c.assignedOfficer && !isClosedComplaint(c));
+    if (mode === 'Pending') return allComplaints.filter(c => !isClosedComplaint(c) && !isEscalatedComplaint(c));
+    if (mode === 'Resolved') return allComplaints.filter(c => c.status === 'Resolved' || c.status === 'Closed');
+    return allComplaints;
+}
+
+function rowForMode(c, mode) {
+    if (mode === 'New') {
+        return `<tr><td><input type="checkbox"></td><td>${c.id}</td><td>${c.citizenName || 'Unknown'}</td><td>${c.type || 'N/A'}</td><td>${c.dateSubmitted || '-'}</td><td>${statusPill(c.status)}</td><td>${actionButton(c)}</td></tr>`;
+    }
+    if (mode === 'Escalated') {
+        return `<tr><td>${c.id}</td><td>${c.citizenName || 'Unknown'}</td><td>${c.type || 'N/A'}</td><td>Level ${c.escalationLevel || 1}</td><td>${c.forwardedBy || 'Mukhiya'}</td><td>${daysOpen(c)}</td><td>${actionButton(c)}</td></tr>`;
+    }
+    if (mode === 'Assigned') {
+        return `<tr><td>${c.id}</td><td>${c.citizenName || 'Unknown'}</td><td>${c.assignedOfficer || 'Admin Department'}</td><td>${statusPill(c.status)}</td><td>${c.forwardedDate || c.updatedAt || c.dateSubmitted || '-'}</td><td>${isEscalatedComplaint(c) ? 'High' : 'Normal'}</td><td>${actionButton(c)}</td></tr>`;
+    }
+    if (mode === 'Pending') {
+        return `<tr><td><input type="checkbox"></td><td>${c.id}</td><td>${c.citizenName || 'Unknown'}</td><td>${c.type || 'N/A'}</td><td>${c.assignedOfficer || 'Unassigned'}</td><td>${daysOpen(c)}</td><td>${c.forwardedDate || c.dateSubmitted || '-'}</td><td>${actionButton(c)}</td></tr>`;
+    }
+    if (mode === 'Resolved') {
+        return `<tr><td>${c.id}</td><td>${c.type || 'N/A'}</td><td>${c.dateResolved || c.closedDate || '-'}</td><td>${daysOpen(c)} days</td><td>${c.citizenRating ? c.citizenRating + '/5' : 'Pending'}</td><td>${c.assignedOfficer || c.forwardedBy || 'Mukhiya'}</td><td>${actionButton(c)}</td></tr>`;
+    }
+    return `<tr><td>${c.id}</td><td>${c.citizenName || 'Unknown'}</td><td>${c.type || 'N/A'}</td><td>${c.dateSubmitted || '-'}</td><td>${statusPill(c.status)}</td><td>${c.assignedOfficer || '-'}</td><td>${actionButton(c)}</td></tr>`;
+}
+
+async function renderAdminDashboardData() {
+    const allComplaints = await loadAdminComplaints();
+    const mode = getAdminPageMode();
+    if (!mode) return;
+
+    const totalEl = document.getElementById('kpi-total');
+    if (totalEl) {
+        totalEl.innerText = allComplaints.length;
+        const pendingEl = document.getElementById('kpi-pending');
+        const resolvedEl = document.getElementById('kpi-resolved');
+        const escalatedEl = document.getElementById('kpi-escalated');
+        if (pendingEl) pendingEl.innerText = allComplaints.filter(c => !isClosedComplaint(c)).length;
+        if (resolvedEl) resolvedEl.innerText = allComplaints.filter(c => c.status === 'Resolved' || c.status === 'Closed').length;
+        if (escalatedEl) escalatedEl.innerText = allComplaints.filter(isEscalatedComplaint).length;
+    }
+
+    const tbody = document.getElementById('complaintsTableBody') || document.querySelector('.table-row tbody');
+    if (!tbody) return;
+
+    const rows = filterComplaintsForMode(allComplaints, mode).slice().reverse();
+    tbody.innerHTML = rows.length
+        ? rows.map(c => rowForMode(c, mode)).join('')
+        : `<tr><td colspan="8" style="text-align:center; color:#777; padding:18px;">No complaints found.</td></tr>`;
+}
+
+async function initializeDashboardCharts() {
+    const allComplaints = await loadAdminComplaints();
+
+    // Build category counts from real data
+    const categoryCounts = {};
+    allComplaints.forEach(function(c) {
+        const cat = c.type || 'Other';
+        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+    });
+    const catLabels = Object.keys(categoryCounts);
+    const catData   = catLabels.map(function(k) { return categoryCounts[k]; });
+    const catColors = ['#0d6efd','#20c997','#ffc107','#dc3545','#6c757d','#6610f2','#fd7e14','#17a2b8'];
+
     // --- Dashboard: Complaint Categories (Doughnut Chart) ---
     const categoryCtx = document.getElementById('categoryChart');
     if (categoryCtx) {
-        new Chart(categoryCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Water (30%)', 'Roads (29%)', 'Electricity (20%)', 'Corruption', 'Others'],
-                datasets: [{
-                    data: [30, 29, 20, 10, 11],
-                    backgroundColor: [
-                        '#0d6efd', '#20c997', '#ffc107', '#dc3545', '#6c757d'
-                    ],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'right' },
-                    title: { display: false }
-                }
-            }
-        });
+        if (catLabels.length === 0) {
+            categoryCtx.parentElement.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No complaints yet.</p>';
+        } else {
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: catLabels,
+                    datasets: [{ data: catData, backgroundColor: catColors.slice(0, catLabels.length), hoverOffset: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+            });
+        }
     }
+
+    // Build monthly trend from real data (dateSubmitted is DD/MM/YYYY)
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const filedByMonth    = new Array(12).fill(0);
+    const resolvedByMonth = new Array(12).fill(0);
+    allComplaints.forEach(function(c) {
+        if (c.dateSubmitted) {
+            const parts = c.dateSubmitted.split('/');
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            if (monthIdx >= 0 && monthIdx < 12) {
+                filedByMonth[monthIdx]++;
+                if (c.status === 'Resolved' || c.status === 'Closed') resolvedByMonth[monthIdx]++;
+            }
+        }
+    });
 
     // --- Dashboard: Complaints Over Time (Line Chart) ---
     const timeCtx = document.getElementById('timeChart');
@@ -35,17 +331,17 @@ function initializeDashboardCharts() {
         new Chart(timeCtx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                labels: monthNames,
                 datasets: [{
                     label: 'Complaints Filed',
-                    data: [5, 12, 18, 10, 15],
+                    data: filedByMonth,
                     borderColor: '#0d6efd',
                     backgroundColor: 'rgba(13, 110, 253, 0.2)',
                     fill: false,
                     tension: 0.3
                 }, {
                     label: 'Complaints Resolved',
-                    data: [2, 4, 6, 15, 25],
+                    data: resolvedByMonth,
                     borderColor: '#20c997',
                     backgroundColor: 'rgba(32, 201, 151, 0.2)',
                     fill: false,
@@ -55,599 +351,129 @@ function initializeDashboardCharts() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true }
-                },
-                plugins: {
-                    legend: { display: true, position: 'top' }
-                }
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: true, position: 'top' } }
             }
         });
     }
 }
 
-function initializeAnalyticsCharts() {
-    // --- 1. Analytics: Resolution Time Distribution (Bar Chart) ---
-    const resTimeCtx = document.getElementById('resTimeChart');
+async function initializeAnalyticsCharts() {
+    const allComplaints = await loadAdminComplaints();
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function parseDate(d) {
+        if (!d) return null;
+        var p = d.split('/');
+        return p.length === 3 ? new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0])) : null;
+    }
+    function daysBetween(start, end) {
+        var s = parseDate(start), e = end ? parseDate(end) : new Date();
+        if (!s || !e) return null;
+        return Math.max(0, Math.floor((e - s) / 86400000));
+    }
+
+    // --- 1. Resolution Time Distribution (real data) ---
+    var resTimeCtx = document.getElementById('resTimeChart');
     if (resTimeCtx) {
+        var buckets = [0, 0, 0, 0];
+        allComplaints.filter(function(c) { return c.status === 'Resolved' || c.status === 'Closed'; })
+            .forEach(function(c) {
+                var d = daysBetween(c.dateSubmitted, c.dateResolved);
+                if (d === null) return;
+                if (d < 5) buckets[0]++;
+                else if (d <= 10) buckets[1]++;
+                else if (d <= 20) buckets[2]++;
+                else buckets[3]++;
+            });
         new Chart(resTimeCtx, {
             type: 'bar',
             data: {
                 labels: ['< 5 Days', '5-10 Days', '11-20 Days', '> 20 Days'],
-                datasets: [{
-                    label: 'Complaints Resolved',
-                    data: [45, 30, 15, 10],
-                    backgroundColor: '#0d6efd',
-                    borderColor: '#0d6efd',
-                    borderWidth: 1
-                }]
+                datasets: [{ label: 'Complaints Resolved', data: buckets, backgroundColor: '#0d6efd', borderColor: '#0d6efd', borderWidth: 1 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: 'Number of Complaints' }
-                    }
-                },
-                plugins: { legend: { display: false } }
-            }
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'No. of Complaints' } } }, plugins: { legend: { display: false } } }
         });
     }
 
-    // --- 2. Analytics: Officer Performance Ranking (Radar Chart) ---
-    const performanceCtx = document.getElementById('performanceChart');
+    // --- 2. Officer Performance (real assigned vs resolved per officer) ---
+    var performanceCtx = document.getElementById('performanceChart');
     if (performanceCtx) {
-        new Chart(performanceCtx, {
-            type: 'radar',
-            data: {
-                labels: ['Resolution Rate', 'Avg Time (Days)', 'Escalation Rate', 'Citizen Score', 'Volume Handled'],
-                datasets: [{
-                    label: 'Officer A',
-                    data: [80, 10, 5, 4.5, 90],
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgb(255, 99, 132)',
-                }, {
-                    label: 'Officer B',
-                    data: [95, 8, 2, 4.8, 75],
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgb(54, 162, 235)',
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                elements: { line: { borderWidth: 3 } },
-                scales: {
-                    r: {
-                        angleLines: { display: false },
-                        suggestedMin: 0,
-                        suggestedMax: 100
-                    }
-                }
-            }
+        var officerStats = {};
+        allComplaints.forEach(function(c) {
+            if (!c.assignedOfficer) return;
+            if (!officerStats[c.assignedOfficer]) officerStats[c.assignedOfficer] = { total: 0, resolved: 0 };
+            officerStats[c.assignedOfficer].total++;
+            if (c.status === 'Resolved' || c.status === 'Closed') officerStats[c.assignedOfficer].resolved++;
         });
-    }
-
-    // --- 3. Analytics: Escalation Rate by Category (Pie Chart) ---
-    const escalationCtx = document.getElementById('escalationChart');
-    if (escalationCtx) {
-        new Chart(escalationCtx, {
-            type: 'pie',
-            data: {
-                labels: ['Corruption (35%)', 'Infrastructure (30%)', 'Misconduct (20%)', 'Other (15%)'],
-                datasets: [{
-                    data: [35, 30, 20, 15],
-                    backgroundColor: [
-                        '#dc3545', '#ffc107', '#0d6efd', '#6c757d'
-                    ],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'right' },
-                    title: { display: false }
-                }
-            }
-        });
-    }
-
-    // --- 4. Analytics: Unresolved Complaints Trend (Line Chart) ---
-    const unresolvedCtx = document.getElementById('unresolvedChart');
-    if (unresolvedCtx) {
-        new Chart(unresolvedCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                datasets: [{
-                    label: 'Pending Complaints',
-                    data: [20, 25, 35, 30, 40],
-                    borderColor: '#dc3545',
-                    backgroundColor: 'rgba(220, 53, 69, 0.2)',
-                    fill: true,
-                    tension: 0.2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true }
+        var officerNames = Object.keys(officerStats);
+        if (officerNames.length === 0) {
+            performanceCtx.parentElement.innerHTML = '<p style="text-align:center;color:#999;padding:40px;">No officers assigned yet.</p>';
+        } else {
+            new Chart(performanceCtx, {
+                type: 'bar',
+                data: {
+                    labels: officerNames,
+                    datasets: [
+                        { label: 'Total Assigned', data: officerNames.map(function(o) { return officerStats[o].total; }), backgroundColor: 'rgba(54,162,235,0.8)' },
+                        { label: 'Resolved', data: officerNames.map(function(o) { return officerStats[o].resolved; }), backgroundColor: 'rgba(75,192,192,0.8)' }
+                    ]
                 },
-                plugins: { legend: { display: false } }
-            }
-        });
-    }
-}
-
-
-// ====================================================================
-//                  ACTION BUTTON HANDLER FUNCTION
-// ====================================================================
-function handleTableActions(event) {
-    // 1. Check if the clicked element is an action button
-    const button = event.target.closest('button[class^="action-btn-"]');
-    if (!button) return;
-
-    event.preventDefault();
-
-    // Find the closest table row (<tr>)
-    const row = button.closest('tr');
-    if (!row) return;
-
-    // Extract Complaint ID
-    const complaintIdCellIndex = row.querySelector('input[type="checkbox"]') ? 1 : 0;
-    // Check if the cell exists before accessing textContent
-    const complaintId = row.cells[complaintIdCellIndex] ? row.cells[complaintIdCellIndex].textContent.trim() : 'N/A';
-
-    const actionType = button.className.replace('action-btn-', '').split(' ')[0];
-
-    console.log(`--- Action Triggered ---`);
-    console.log(`Complaint ID: ${complaintId}`);
-    console.log(`Action Type: ${actionType}`);
-
-    // --- Implement Specific Action Logic Here (Redirect, Modal, AJAX) ---
-    switch (actionType) {
-        case 'view':
-        case 'update':
-        case 'view/assign':
-            // Redirect example:
-            // window.location.href = `view_complaint_details.html?id=${complaintId}`;
-            console.log(`ACTION: Opening detail view for ID ${complaintId}`);
-            break;
-
-        case 'escalate':
-        case 'critical':
-            // Modal example:
-            // openEscalationModal(complaintId);
-            console.log(`ACTION: Prompting escalation confirmation for ID ${complaintId}`);
-            break;
-
-        default:
-            console.log(`ACTION: Unhandled action type: ${actionType}`);
-            break;
-    }
-}
-
-
-window.assignOfficerDropdown = function (id) {
-    if (typeof SimulatedDB === 'undefined') return;
-
-    const selectElem = document.getElementById(`assign_select_${id}`);
-    if (!selectElem) return;
-
-    const officerName = selectElem.value;
-    if (!officerName) {
-        alert("Please select an officer from the dropdown.");
-        return;
-    }
-
-    const complaint = SimulatedDB.allComplaints.find(c => c.id === id);
-    if (complaint) {
-        complaint.assignedOfficer = officerName;
-        if (complaint.status === 'New' || complaint.status === 'Escalated') {
-            complaint.status = 'In Progress';
-        }
-
-        if (typeof saveDatabase === 'function') {
-            saveDatabase();
-        }
-
-        // Dynamically update the admin table
-        renderAdminDashboardData();
-        if (typeof renderAdminListPage === 'function') renderAdminListPage();
-    }
-};
-
-window.closeAdminComplaint = function (id) {
-    if (typeof SimulatedDB === 'undefined') return;
-
-    const remarksElem = document.getElementById(`closeRemarks_${id}`);
-    const remarks = remarksElem ? remarksElem.value.trim() : '';
-
-    if (!remarks) {
-        alert("Please enter resolution remarks before closing.");
-        return;
-    }
-
-    const complaint = SimulatedDB.allComplaints.find(c => c.id === id);
-    if (complaint) {
-        complaint.status = 'Resolved';
-        complaint.dateResolved = new Date().toLocaleDateString('en-GB');
-        complaint.resolutionRemarks = remarks;
-
-        if (typeof saveDatabase === 'function') {
-            saveDatabase();
-        }
-
-        document.getElementById('adminViewModal').style.display = 'none';
-
-        renderAdminDashboardData();
-        if (typeof renderAdminListPage === 'function') renderAdminListPage();
-    }
-};
-
-window.viewAdminComplaintDetails = function (id) {
-    if (typeof SimulatedDB === 'undefined') return;
-    const complaint = SimulatedDB.allComplaints.find(c => c.id === id);
-    if (!complaint) return;
-
-    // Check if modal exists, if not create it
-    let modal = document.getElementById('adminViewModal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'adminViewModal';
-        modal.style.cssText = "display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);";
-
-        modal.innerHTML = `
-            <div style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 50%; border-radius: 10px; font-family: Arial, sans-serif; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
-                <span onclick="document.getElementById('adminViewModal').style.display='none'" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
-                <h2 style="color: #00009c; border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-top: 0;"><i class="fas fa-file-alt"></i> Complaint Details</h2>
-                <div id="adminViewModalContent" style="margin-top: 20px; font-size: 16px; line-height: 1.6;"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-
-        // Close on outside click
-        window.addEventListener('click', function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        });
-    }
-
-    const content = document.getElementById('adminViewModalContent');
-    content.innerHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div><strong style="color: #555;">Complaint ID:</strong> ${complaint.id}</div>
-            <div><strong style="color: #555;">Status:</strong> <span style="font-weight:bold; color: #00009c;">${complaint.status}</span></div>
-            <div><strong style="color: #555;">Citizen Name:</strong> ${complaint.citizenName}</div>
-            <div><strong style="color: #555;">Date Submitted:</strong> ${complaint.dateSubmitted}</div>
-            <div><strong style="color: #555;">Category:</strong> ${complaint.type}</div>
-            <div><strong style="color: #555;">Assigned Officer:</strong> ${complaint.assignedOfficer || 'None'}</div>
-        </div>
-        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-left: 4px solid #00009c; border-radius: 4px;">
-            <strong style="color: #555; display:block; margin-bottom:5px;">Message/Description:</strong>
-            ${complaint.message || 'No description provided.'}
-        </div>
-        ${complaint.attachmentName && complaint.attachmentName !== 'None' ? `
-        <div style="margin-top: 15px;">
-            <strong style="color: #555;">Attachment:</strong> <a href="${complaint.attachmentPath}" target="_blank" style="color: #007bff; text-decoration: none;">${complaint.attachmentName}</a>
-        </div>` : ''}
-        
-        ${complaint.resolutionRemarks ? `
-        <div style="margin-top: 15px; padding: 15px; background: #d4edda; border-left: 4px solid #28a745; border-radius: 4px;">
-            <strong style="color: #155724; display:block; margin-bottom:5px;">Resolution Remarks:</strong>
-            <span style="color: #155724;">${complaint.resolutionRemarks}</span>
-        </div>` : ''}
-        
-        ${(complaint.status !== 'Resolved' && complaint.status !== 'Cancelled') ? `
-        <div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
-            <h3 style="color: #28a745; margin-top: 0; font-size: 16px;">Resolve & Close Complaint</h3>
-            <textarea id="closeRemarks_${complaint.id}" placeholder="Enter remarks or resolution details..." rows="3" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px; resize: vertical;"></textarea>
-            <button onclick="closeAdminComplaint('${complaint.id}')" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;"><i class="fas fa-check-circle"></i> Mark as Resolved</button>
-        </div>` : ''}
-    `;
-
-    modal.style.display = "block";
-};
-
-function renderAdminDashboardData() {
-    if (typeof SimulatedDB === 'undefined') return;
-
-    const allComplaints = SimulatedDB.allComplaints || [];
-
-    // Update KPIs
-    const total = allComplaints.length;
-    const pending = allComplaints.filter(c => c.status.includes('Progress') || c.status === 'New' || c.status === 'Pending').length;
-    const resolved = allComplaints.filter(c => c.status === 'Resolved').length;
-    const escalated = allComplaints.filter(c => c.escalationLevel > 0).length;
-
-    const elTotal = document.getElementById('kpi-total');
-    const elPending = document.getElementById('kpi-pending');
-    const elResolved = document.getElementById('kpi-resolved');
-    const elEscalated = document.getElementById('kpi-escalated');
-
-    if (elTotal) elTotal.innerText = total;
-    if (elPending) elPending.innerText = pending;
-    if (elResolved) elResolved.innerText = resolved;
-    if (elEscalated) elEscalated.innerText = escalated;
-
-    // Update Table
-    const tbody = document.getElementById('complaintsTableBody');
-    if (tbody) {
-        tbody.innerHTML = '';
-        const recent = allComplaints.slice().reverse().slice(0, 10);
-        recent.forEach(c => {
-            let statusColor = '#000000'; let statusBg = 'transparent';
-            if (c.status.includes('Progress') || c.status === 'Pending' || c.status === 'Waiting for Data') { statusColor = '#856404'; statusBg = '#fff3cd'; }
-            else if (c.status === 'Resolved') { statusColor = '#155724'; statusBg = '#d4edda'; }
-            else if (c.status === 'Escalated') { statusColor = '#721c24'; statusBg = '#f8d7da'; }
-            else if (c.status === 'New') { statusColor = '#004085'; statusBg = '#cce5ff'; }
-            else if (c.status === 'Cancelled') { statusColor = '#383d41'; statusBg = '#e2e3e5'; }
-            else { statusColor = '#383d41'; statusBg = '#e2e3e5'; }
-
-            const statusPill = `<span style="padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; background-color: ${statusBg}; color: ${statusColor};">${c.status}</span>`;
-
-            const officers = ['Officer Rajesh', 'Officer Anjali', 'Officer Ramesh', 'Inspector Vivek'];
-            const assignDropdown = `
-                <select id="assign_select_${c.id}" style="padding: 5px; border-radius: 5px; margin-right: 5px;">
-                    <option value="">Select Officer</option>
-                    ${officers.map(o => `<option value="${o}">${o}</option>`).join('')}
-                </select>
-                <button onclick="assignOfficerDropdown('${c.id}')" style="padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Assign</button>
-            `;
-
-            const officerDisplay = c.assignedOfficer
-                ? c.assignedOfficer
-                : (c.status === 'Resolved' || c.status === 'Cancelled')
-                    ? '<span style="color:#6c757d;">Closed</span>'
-                    : assignDropdown;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${c.id}</td>
-                <td>${c.citizenName || 'Unknown'}</td>
-                <td>${c.type || 'N/A'}</td>
-                <td>${c.dateSubmitted}</td>
-                <td>${statusPill}</td>
-                <td>${officerDisplay}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-}
-
-window.renderAdminListPage = function () {
-    if (typeof SimulatedDB === 'undefined' || typeof getComplaintsForAdminView === 'undefined') return;
-    const currentPath = window.location.pathname.split('/').pop();
-
-    const listPages = [
-        'TotalComplaints.html',
-        'NewComplaints.html',
-        'AssignedComplaints.html',
-        'PendingComplaints.html',
-        'ResolvedComplaints.html',
-        'EscalatedComplaints.html'
-    ];
-
-    if (!listPages.includes(currentPath)) return;
-
-    const tbody = document.querySelector('.table-row tbody');
-    if (!tbody) return;
-
-    let filterStatus = 'All';
-    if (currentPath === 'NewComplaints.html') filterStatus = 'New';
-    else if (currentPath === 'AssignedComplaints.html') filterStatus = 'Assigned';
-    else if (currentPath === 'PendingComplaints.html') filterStatus = 'Pending';
-    else if (currentPath === 'ResolvedComplaints.html') filterStatus = 'Resolved';
-    else if (currentPath === 'EscalatedComplaints.html') filterStatus = 'Escalated';
-
-    const complaints = getComplaintsForAdminView(filterStatus);
-
-    tbody.innerHTML = '';
-
-    complaints.reverse().forEach(c => {
-        let statusColor = '#000000'; let statusBg = 'transparent';
-        if (c.status.includes('Progress') || c.status === 'Pending' || c.status === 'Waiting for Data') { statusColor = '#856404'; statusBg = '#fff3cd'; }
-        else if (c.status === 'Resolved') { statusColor = '#155724'; statusBg = '#d4edda'; }
-        else if (c.status === 'Escalated') { statusColor = '#721c24'; statusBg = '#f8d7da'; }
-        else if (c.status === 'New') { statusColor = '#004085'; statusBg = '#cce5ff'; }
-        else if (c.status === 'Cancelled') { statusColor = '#383d41'; statusBg = '#e2e3e5'; }
-        else { statusColor = '#383d41'; statusBg = '#e2e3e5'; }
-
-        const statusPill = `<span style="padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; background-color: ${statusBg}; color: ${statusColor};">${c.status}</span>`;
-
-        const officers = ['Officer Rajesh', 'Officer Anjali', 'Officer Ramesh', 'Inspector Vivek'];
-        const assignDropdown = `
-            <select id="assign_select_${c.id}" style="padding: 5px; border-radius: 5px; margin-right: 5px;">
-                <option value="">Select Officer</option>
-                ${officers.map(o => `<option value="${o}">${o}</option>`).join('')}
-            </select>
-            <button onclick="assignOfficerDropdown('${c.id}')" style="padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Assign</button>
-        `;
-
-        const officerDisplay = c.assignedOfficer
-            ? c.assignedOfficer
-            : (c.status === 'Resolved' || c.status === 'Cancelled')
-                ? '<span style="color:#6c757d;">Closed</span>'
-                : assignDropdown;
-
-        const viewDetailsBtn = `<button onclick="viewAdminComplaintDetails('${c.id}')" style="padding: 5px 10px; background: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer;">View Details</button>`;
-
-        const tr = document.createElement('tr');
-
-        if (currentPath === 'NewComplaints.html') {
-            // Checkbox, Complaint ID, Citizen Name, Category, Date Submitted, Status, Action
-            tr.innerHTML = `
-                <td><input type="checkbox"></td>
-                <td>${c.id}</td>
-                <td>${c.citizenName || 'Unknown'}</td>
-                <td>${c.type || 'N/A'}</td>
-                <td>${c.dateSubmitted}</td>
-                <td>${statusPill}</td>
-                <td>${officerDisplay}</td>
-            `;
-        } else if (currentPath === 'AssignedComplaints.html') {
-            // Complaint ID, Citizen Name, Assigned Officer, Status, Last Update, Priority, Action
-            const priority = c.escalationLevel > 0 ? 'High' : 'Medium';
-            const priorityColor = priority === 'High' ? '#dc3545' : '#17a2b8';
-            tr.innerHTML = `
-                <td>${c.id}</td>
-                <td>${c.citizenName || 'Unknown'}</td>
-                <td>${c.assignedOfficer || 'Unassigned'}</td>
-                <td>${statusPill}</td>
-                <td>${c.dateSubmitted}</td>
-                <td style="font-weight:bold; color:${priorityColor};">${priority}</td>
-                <td>${viewDetailsBtn}</td>
-            `;
-        } else if (currentPath === 'PendingComplaints.html') {
-            // Checkbox, Complaint ID, Citizen Name, Category, Assigned Officer, Days Pending, Last Action Date, Action
-            tr.innerHTML = `
-                <td><input type="checkbox"></td>
-                <td>${c.id}</td>
-                <td>${c.citizenName || 'Unknown'}</td>
-                <td>${c.type || 'N/A'}</td>
-                <td>${c.assignedOfficer || 'Unassigned'}</td>
-                <td>3 Days</td>
-                <td>${c.dateSubmitted}</td>
-                <td>${viewDetailsBtn}</td>
-            `;
-        } else if (currentPath === 'EscalatedComplaints.html') {
-            // Complaint ID, Citizen Name, Category, Escalation Level, Raised By, Days Open, Action
-            tr.innerHTML = `
-                <td>${c.id}</td>
-                <td>${c.citizenName || 'Unknown'}</td>
-                <td>${c.type || 'N/A'}</td>
-                <td style="color:red; font-weight:bold;">Level ${c.escalationLevel || 1}</td>
-                <td>Citizen</td>
-                <td>5 Days</td>
-                <td>${viewDetailsBtn}</td>
-            `;
-        } else if (currentPath === 'ResolvedComplaints.html') {
-            // Complaint ID, Category, Resolution Date, Time to Resolve, Resolution Score, Closed By, Action
-            const ratingText = c.citizenRating ? `<span style="color:#28a745; font-weight:bold;">${c.citizenRating}.0 / 5.0</span><br><small style="color:#6c757d;">"${c.citizenFeedback}"</small>` : `<span style="color:#856404; font-size:12px;">Pending Feedback</span>`;
-            tr.innerHTML = `
-                <td>${c.id}</td>
-                <td>${c.type || 'N/A'}</td>
-                <td>${c.dateResolved || c.dateSubmitted}</td>
-                <td>4 Days</td>
-                <td>${ratingText}</td>
-                <td>${c.assignedOfficer || 'System'}</td>
-                <td>${viewDetailsBtn}</td>
-            `;
-        } else {
-            // TotalComplaints.html: Complaint ID, Citizen Name, Category, Date Received, Status, Assigned Officer, Action
-            tr.innerHTML = `
-                <td>${c.id}</td>
-                <td>${c.citizenName || 'Unknown'}</td>
-                <td>${c.type || 'N/A'}</td>
-                <td>${c.dateSubmitted}</td>
-                <td>${statusPill}</td>
-                <td>${c.assignedOfficer || 'Unassigned'}</td>
-                <td>${officerDisplay}</td>
-            `;
-        }
-
-        tbody.appendChild(tr);
-    });
-}
-
-// ====================================================================
-//                     MAIN DOM LOAD LISTENER
-// ====================================================================
-document.addEventListener('DOMContentLoaded', function () {
-
-    const currentPath = window.location.pathname.split('/').pop();
-    const sidebarLinks = document.querySelectorAll('.links a');
-
-    // --- 1. Sidebar Active Link Management ---
-    sidebarLinks.forEach(link => {
-        const linkPath = link.getAttribute('href').split('/').pop();
-
-        if (linkPath === currentPath) {
-            link.classList.add('active-link');
-        } else {
-            link.classList.remove('active-link');
-        }
-    });
-
-    // --- 2. Chart Initialization Calls ---
-    if (currentPath.includes('AdminDashboard.html')) {
-        renderAdminDashboardData();
-        initializeDashboardCharts();
-    }
-    if (currentPath.includes('AnalyticsReports.html')) {
-        initializeAnalyticsCharts();
-    }
-
-    // Check if it's a list page and render it dynamically
-    renderAdminListPage();
-
-    // --- 3. UNIVERSAL TABLE FILTERING & SEARCH (Omitted for brevity, but stays here) ---
-    // ... (All your filtering logic remains here) ...
-    const listPages = [
-        'TotalComplaints.html',
-        'NewComplaints.html',
-        'AssignedComplaints.html',
-        'PendingComplaints.html',
-        'ResolvedComplaints.html',
-        'EscalatedComplaints.html'
-    ];
-
-    if (listPages.includes(currentPath)) {
-        const searchInput = document.querySelector('.search-input');
-        const filterSelect = document.querySelector('.filter-select');
-        const tableBody = document.querySelector('.table-row tbody');
-        const tableRows = tableBody ? tableBody.querySelectorAll('tr') : [];
-
-        function filterTable() {
-            // (Filtering logic unchanged)
-            const searchText = searchInput ? searchInput.value.toLowerCase() : '';
-            const filterValue = filterSelect ? filterSelect.value.toLowerCase() : '';
-
-            tableRows.forEach(row => {
-                const idText = row.cells[0] ? row.cells[0].textContent.toLowerCase() : '';
-                const nameText = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
-                const statusText = row.cells[4] ? row.cells[4].textContent.toLowerCase() : '';
-
-                const searchMatch = searchText === '' || idText.includes(searchText) || nameText.includes(searchText) || row.textContent.toLowerCase().includes(searchText);
-                const filterMatch = filterValue === '' || statusText.includes(filterValue);
-
-                if (currentPath === 'NewComplaints.html' && filterSelect) {
-                    const categoryText = row.cells[3].textContent.toLowerCase();
-                    const categoryMatch = filterValue === '' || categoryText.includes(filterValue);
-                    if (searchMatch && categoryMatch) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                } else {
-                    if (searchMatch && filterMatch) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } }
             });
         }
-        if (searchInput) {
-            searchInput.addEventListener('keyup', filterTable);
-        }
-        if (filterSelect) {
-            filterSelect.addEventListener('change', filterTable);
-        }
-        filterTable();
     }
 
-    // --- 4. ATTACH ACTION BUTTON HANDLER ---
-    const mainContent = document.querySelector('.main-content');
-    if (mainContent) {
-        // Attach the universal handler to the main content container
-        mainContent.addEventListener('click', handleTableActions);
+    // --- 3. Escalation Rate by Category (real data) ---
+    var escalationCtx = document.getElementById('escalationChart');
+    if (escalationCtx) {
+        var escCats = {};
+        allComplaints.filter(function(c) { return c.escalationLevel > 0 || c.status === 'Escalated'; })
+            .forEach(function(c) { var cat = c.type || 'Other'; escCats[cat] = (escCats[cat] || 0) + 1; });
+        var escLabels = Object.keys(escCats);
+        if (escLabels.length === 0) {
+            escalationCtx.parentElement.innerHTML = '<p style="text-align:center;color:#999;padding:40px;">No escalated complaints yet.</p>';
+        } else {
+            new Chart(escalationCtx, {
+                type: 'pie',
+                data: { labels: escLabels, datasets: [{ data: escLabels.map(function(k) { return escCats[k]; }), backgroundColor: ['#dc3545','#ffc107','#0d6efd','#6c757d','#20c997','#fd7e14'], hoverOffset: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+            });
+        }
+    }
+
+    // --- 4. Unresolved Complaints Trend by month (real data) ---
+    var unresolvedCtx = document.getElementById('unresolvedChart');
+    if (unresolvedCtx) {
+        var pendingByMonth = new Array(12).fill(0);
+        allComplaints.filter(function(c) { return c.status !== 'Resolved' && c.status !== 'Closed' && c.status !== 'Cancelled'; })
+            .forEach(function(c) {
+                if (c.dateSubmitted) {
+                    var parts = c.dateSubmitted.split('/');
+                    var mi = parseInt(parts[1], 10) - 1;
+                    if (mi >= 0 && mi < 12) pendingByMonth[mi]++;
+                }
+            });
+        new Chart(unresolvedCtx, {
+            type: 'line',
+            data: { labels: monthNames, datasets: [{ label: 'Unresolved', data: pendingByMonth, borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.2)', fill: true, tension: 0.2 }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+        });
+    }
+}
+
+// ====================================================================
+//                  INITIALIZATION
+// ====================================================================
+document.addEventListener('DOMContentLoaded', async function() {
+    injectComplaintModal();
+    await waitForDbReady();
+    await renderAdminDashboardData();
+    // Initialize charts based on page
+    if (document.getElementById('categoryChart')) {
+        await initializeDashboardCharts();
+    }
+    if (document.getElementById('resTimeChart')) {
+        await initializeAnalyticsCharts();
     }
 });

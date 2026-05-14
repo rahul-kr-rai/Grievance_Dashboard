@@ -1,166 +1,74 @@
-// --- db.js ---
+// ============================================================
+// db.js — Master Database Entry Point
+// ============================================================
+//
+// Loads all database modules sequentially, then fires a
+// 'dbReady' CustomEvent on window so that render functions
+// in main.js can safely use SimulatedDB without race conditions.
+//
+// Module map:
+//   db/userDB.js         — User accounts & session
+//   db/complaintDB.js    — Grievance / complaint CRUD
+//   db/chatDB.js         — Mukhiya <-> Citizen messaging
+//   db/announcementDB.js — Panchayat announcements
+//   db/fundDB.js         — Budget & fund allocation
+// ============================================================
 
-// ====================================================================
-// 1. SIMULATED DATABASE DEFINITION & PERSISTENCE
-// ====================================================================
+(function loadDatabaseModules() {
+    const BASE = '/Backend/db/';
+    const modules = [
+        'userDB.js',
+        'complaintDB.js',
+        'chatDB.js',
+        'announcementDB.js',
+        'fundDB.js'
+    ];
 
-const DB_STORAGE_KEY = 'complaintAdminDB_v2';
+    let loadedCount = 0;
+    const total = modules.length;
 
-// Initial structure and default sample data
-let SimulatedDB = {
-    // Basic user credentials for login simulation
-    users: [
-        { id: 'citizen1', email: 'rahul@example.com', password: 'userpass', role: 'citizen', name: 'Rahul' },
-        { id: 'admin1', email: 'admin@city.gov', password: 'adminpass', role: 'admin', name: 'Admin OfficerName' }
-    ],
-    // Array to hold all complaints (The master source of truth)
-    allComplaints: [],
-    // Tracking the next available sequential ID for new complaints
-    nextComplaintId: 12361
-};
+    // Load modules one-by-one (sequential). Each script's onload
+    // triggers the next, so load ORDER is guaranteed.
+    // Only after the LAST script finishes do we fire 'dbReady'.
+    function loadNext(index) {
+        if (index >= total) return;
 
-// --- Sample Data Initialization ---
-function initializeSampleData() {
-    SimulatedDB.allComplaints = [];
-}
+        var script = document.createElement('script');
+        script.src = BASE + modules[index];
 
-
-/**
- * Loads the database state from localStorage on startup. If no data exists, 
- * it initializes with sample data.
- */
-function loadDatabase() {
-    const storedData = localStorage.getItem(DB_STORAGE_KEY);
-    if (storedData) {
-        try {
-            const parsedData = JSON.parse(storedData);
-            SimulatedDB.allComplaints = parsedData.allComplaints || [];
-            SimulatedDB.nextComplaintId = parsedData.nextComplaintId || 12361;
-
-            // If loaded complaints array is empty, populate with samples once
-            if (SimulatedDB.allComplaints.length === 0) {
-                initializeSampleData();
-                saveDatabase();
+        script.onload = function () {
+            loadedCount++;
+            if (loadedCount === total) {
+                // All DB modules are ready — signal the rest of the app
+                window.dbReady = true;
+                window.dispatchEvent(new CustomEvent('dbReady'));
+                console.log('[db.js] All DB modules loaded. dbReady fired.');
+            } else {
+                loadNext(index + 1);
             }
-            
-        } catch (e) {
-            console.error("Failed to load database from localStorage. Starting with samples.", e);
-            initializeSampleData();
-        }
-    } else {
-        // First run: Initialize with samples
-        initializeSampleData();
+        };
+
+        script.onerror = function () {
+            console.error('[db.js] Failed to load: ' + modules[index]);
+            loadedCount++;
+            // Still advance so dbReady eventually fires even on partial failure
+            if (loadedCount === total) {
+                window.dbReady = true;
+                window.dispatchEvent(new CustomEvent('dbReady'));
+            } else {
+                loadNext(index + 1);
+            }
+        };
+
+        document.head.appendChild(script);
     }
-}
 
-/**
- * Saves the current state of the database (excluding user list) to localStorage.
- */
-function saveDatabase() {
-    const dataToStore = {
-        allComplaints: SimulatedDB.allComplaints,
-        nextComplaintId: SimulatedDB.nextComplaintId
-    };
-    localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(dataToStore));
-}
+    loadNext(0);
+})();
 
-// ====================================================================
-// 2. CITIZEN PORTAL UTILITIES (For integration with newComplaint.js)
-// ====================================================================
-
-/**
- * Submits a new complaint or updates an existing one in the master list.
- * @param {Object} newComplaintData - The complaint object from the submission form.
- * @param {boolean} isUpdate - True if updating an existing complaint.
- * @returns {string} The ID of the submitted/updated complaint.
- */
-function submitComplaintToDB(newComplaintData, isUpdate) {
-    if (!isUpdate) {
-        // Create new complaint ID and increment counter
-        const newId = '#' + SimulatedDB.nextComplaintId++;
-        newComplaintData.id = newId;
-        newComplaintData.status = 'New';
-        newComplaintData.dateSubmitted = new Date().toLocaleDateString('en-GB');
-        
-        SimulatedDB.allComplaints.push(newComplaintData);
-    } else {
-        // Find and update the existing complaint
-        const index = SimulatedDB.allComplaints.findIndex(c => c.id === newComplaintData.id);
-        if (index !== -1) {
-            // Merge existing data to retain admin actions like officer assignment
-            const existing = SimulatedDB.allComplaints[index];
-            
-            SimulatedDB.allComplaints[index] = {
-                ...existing, // Keep officer, escalation level, etc.
-                type: newComplaintData.type,
-                message: newComplaintData.message,
-                attachmentName: newComplaintData.attachmentName,
-                attachmentPath: newComplaintData.attachmentPath,
-                status: 'In Progress (Updated)',
-            };
-        } else {
-            console.error("Attempted to update a complaint not found in the master DB.");
-            return null;
-        }
-    }
-    saveDatabase();
-    return newComplaintData.id;
-}
-
-
-/**
- * Retrieves a complaint from the master list by ID.
- * @param {string} id - The complaint ID.
- * @returns {Object|undefined} The complaint object.
- */
-function getComplaintById(id) {
-    return SimulatedDB.allComplaints.find(c => c.id === id);
-}
-
-// ====================================================================
-// 3. ADMIN PORTAL UTILITIES (For integration with main.js for filtering)
-// ====================================================================
-
-/**
- * Retrieves complaints based on the specified status filter for Admin views.
- * @param {string} statusFilter - 'New', 'Resolved', 'Escalated', 'Pending', 'Assigned', or 'All'.
- * @returns {Array} - The filtered list of complaints.
- */
-function getComplaintsForAdminView(statusFilter) {
-    let complaints = SimulatedDB.allComplaints;
-
-    switch (statusFilter) {
-        case 'New':
-            return complaints.filter(c => c.status === 'New');
-        case 'Resolved':
-            return complaints.filter(c => c.status === 'Resolved');
-        case 'Escalated':
-            return complaints.filter(c => c.escalationLevel > 0);
-        case 'Assigned':
-            // Complaints that are assigned and not resolved/new
-            return complaints.filter(c => 
-                (c.status === 'In Progress' || c.status === 'In Progress (Updated)' || c.status === 'Waiting for Data') && c.assignedOfficer
-            );
-        case 'Pending':
-            // Stalled complaints (e.g., in progress for over 7 days, simple example)
-            return complaints.filter(c => 
-                (c.status === 'In Progress' || c.status === 'In Progress (Updated)' || c.status === 'Waiting for Data') && c.assignedOfficer
-            );
-        case 'All':
-        default:
-            return complaints;
-    }
-}
-
-// ====================================================================
-// 4. INITIALIZATION & EXPORT
-// ====================================================================
-
-// Load database state when the script loads
-loadDatabase();
-
-// Export the necessary objects/functions to the global scope if not using modules
-// In a non-module environment, these will be available globally after script execution.
-// window.SimulatedDB = SimulatedDB; 
-// window.submitComplaintToDB = submitComplaintToDB;
-// window.getComplaintsForAdminView = getComplaintsForAdminView;
+// ============================================================
+// BACKWARD COMPATIBILITY SHIM
+// ============================================================
+// complaintDB.js sets: const SimulatedDB = ComplaintDB;
+// All existing SimulatedDB.allComplaints references still work.
+// ============================================================
